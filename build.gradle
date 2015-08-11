@@ -1,0 +1,86 @@
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'jacoco-full-report'
+
+apply plugin: SemanticVersionPlugin
+apply plugin: EclipseCheckstylePlugin
+apply plugin: JavaVersionPlugin
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+        classpath 'com.palantir:jacoco-coverage:0.1.3'
+    }
+}
+
+javaVersion {
+    version '1.7'
+}
+
+jacoco {
+    toolVersion = jacocoVersion
+}
+
+// Required to resolve jacocoAnt
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+// sourceDirectories are not available on jacocoFullReport until after evaluation
+afterEvaluate {
+    coveralls {
+        sourceDirs = tasks.jacocoFullReport.sourceDirectories.flatten()
+        jacocoReportPath = "${buildDir}/reports/jacoco/jacocoFullReport/jacocoFullReport.xml"
+    }
+}
+
+checkstyle {
+    configFile = file("${rootDir}/checkstyle/checkstyle.xml")
+    toolVersion = checkstyleVersion
+    configProperties = [samedir: "${rootDir}/checkstyle"]
+}
+
+findbugs {
+    toolVersion = findbugsVersion
+    effort = 'max'
+    reportLevel = 'medium'
+    findbugsTest {
+      excludeFilter = file("${rootDir}/findbugs/testExcludeFilter.xml")
+    }
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        html.enabled = true
+        xml.enabled = false
+    }
+}
+
+tasks.eclipse.dependsOn(tasks.cleanEclipse)
+
+eclipseClasspath.doLast {
+    eclipse.classpath.sourceSets.main.allSource.each { it.mkdirs() }
+    eclipse.classpath.sourceSets.main.output.each { it.mkdirs() }
+    eclipse.classpath.sourceSets.test.output.each { it.mkdirs() }
+}
+
+
+tasks.coveralls {
+    onlyIf { getProject().hasProperty("isCI") }
+    dependsOn tasks.jacocoFullReport
+}
+
+dependencies {
+    testCompile "junit:junit:$junitVersion"
+    testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+}
+
