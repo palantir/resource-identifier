@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<module name = "Checker">
+  <property name="charset" value="UTF-8"/>
+  <property name="severity" value="error"/>
+  <module name="SuppressionFilter">
+    <property name="file" value="${samedir}/suppressions.xml"/>
+  </module>
+  <module name="TreeWalker">
+    <module name="LineLength">
+      <property name="max" value="160"/>
+      <property name="ignorePattern" value="^(package)|(import)"/>
+    </module>
+    <module name="AvoidStarImport"/>
+    <module name="UnusedImports"/>
+    <module name="ArrayTypeStyle"/>
+    <module name="ConstantName">
+      <property name="applyToPrivate" value="false"/>
+    </module>
+    <module name="DefaultComesLast"/>
+    <module name="EmptyForInitializerPad"/>
+    <module name="EmptyStatement"/>
+    <module name="EqualsHashCode"/>
+    <module name="FileContentsHolder"/>
+    <module name="GenericWhitespace"/>
+    <module name="IllegalImport">
+      <property name="illegalPkgs" value="jersey.repackaged, org.assertj.core.util"/>
+    </module>
+    <module name="ImportOrder">
+      <property name="groups" value="java,javax,org,com,feign,groovy,io,latitude,scala"/>
+      <property name="option" value="top"/>
+    </module>
+    <module name="LeftCurly">
+      <property name="maxLineLength" value="140"/>
+      <property name="tokens" value="CLASS_DEF,CTOR_DEF,INTERFACE_DEF,LITERAL_FINALLY,METHOD_DEF"/>
+    </module>
+    <module name="MethodParamPad"/>
+    <module name="MissingDeprecated"/>
+    <module name="ModifierOrder"/>
+    <module name="MultipleVariableDeclarations"/>
+    <module name="NoWhitespaceAfter">
+      <property name="allowLineBreaks" value="false"/>
+      <property name="tokens" value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+    </module>
+    <module name="NoWhitespaceBefore">
+      <metadata name="net.sf.eclipsecs.core.comment" value="Postfix increment/decrement"/>
+      <property name="tokens" value="POST_DEC,POST_INC"/>
+    </module>
+    <module name="NoWhitespaceBefore">
+      <metadata name="net.sf.eclipsecs.core.comment" value="Allow line breaks for semicolon and dot operator"/>
+      <property name="allowLineBreaks" value="true"/>
+      <property name="tokens" value="SEMI,DOT"/>
+    </module>
+    <module name="OuterTypeFilename"/>
+    <module name="PackageAnnotation"/>
+    <module name="PackageDeclaration"/>
+    <module name="PackageName">
+      <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+    </module>
+    <module name="ParenPad"/>
+    <module name="RedundantImport"/>
+    <module name="RedundantModifier">
+      <property name="tokens" value="VARIABLE_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF"/>
+    </module>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
+    <module name="SuppressWarnings">
+      <property name="format" value="serial"/>
+    </module>
+    <module name="TypecastParenPad">
+      <property name="tokens" value="RPAREN,TYPECAST"/>
+    </module>
+    <!-- Two type name modules for checking main and test file names -->
+    <module name="TypeName">
+      <property name="id" value="mainClassName" />
+      <property name="format" value="^[A-Z][A-Za-z0-9]*$"/>
+    </module>
+    <module name="TypeName">
+      <property name="id" value="testClassName" />
+      <property name="format" value="(?=(^((?!Tests$).)*$))(^[A-Z][A-Za-z0-9]*$)"/>
+    </module>
+    <module name="UpperEll"/>
+    <module name="UnusedImports">
+      <property name="processJavadoc" value="true"/>
+    </module>
+    <module name="WhitespaceAfter"/>
+    <module name="WhitespaceAround">
+      <property name="allowEmptyTypes" value="true"/>
+    </module>
+    <module name="DeclarationOrder"/>
+    <module name="AvoidNestedBlocks"/>
+    <module name="NeedBraces"/>
+    <module name="RightCurly"/>
+    <module name="DesignForExtension"/>
+    <module name="FinalClass"/>
+    <module name="InnerTypeLast"/>
+    <module name="HideUtilityClassConstructor"/>
+    <module name="MutableException"/>
+    <module name="FallThrough">
+      <property name="checkLastCaseGroup" value="true"/>
+    </module>
+    <module name="IllegalThrows"/>
+    <module name="InnerAssignment"/>
+    <module name="MissingSwitchDefault"/>
+    <module name="NoClone"/>
+    <module name="NoFinalizer"/>
+    <module name="OneStatementPerLine"/>
+    <module name="ParameterName"/>
+    <module name="StaticVariableName"/>
+    <module name="LocalVariableName"/>
+    <module name="MemberName"/>
+    <module name="MethodName"/>
+    <module name="MethodTypeParameterName"/>
+  </module>
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="@return.*\.$"/>
+    <property name="message" value="Please delete the period."/>
+    <property name="fileExtensions" value=".java,.ts"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="\s+$"/>
+    <property name="message" value="Trailing whitespace is not allowed."/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="&lt;&lt;&lt;&lt;&lt;&lt;&lt;"/>
+    <property name="message" value="Found (&lt;&lt;&lt;&lt;&lt;&lt;&lt;), so it looks like you had a merge conflict that compiles. Please fix it."/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="\? extends Object\W"/>
+    <property name="message" value="Use ? rather than ? extends Object"/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="&gt;&gt;&gt;&gt;&gt;&gt;&gt;"/>
+    <property name="message" value="Found (&gt;&gt;&gt;&gt;&gt;&gt;&gt;), so it looks like you had a merge conflict that compiles. Please fix it."/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="assertEquals\(null,"/>
+    <property name="message" value="Use assertNull() instead."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="assertFalse\(.*[!=]="/>
+    <property name="message" value="Use better assertion method(s): assertEquals(), assertNull(), assertSame(), etc."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="assertTrue\(!"/>
+    <property name="message" value="Use assertFalse()."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="assertTrue\(.*[!=]="/>
+    <property name="message" value="Use better assertion method(s): assertEquals(), assertNull(), assertSame(), etc."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="ImmutableList\.Builder.*new ImmutableList\.Builder"/>
+    <property name="message" value="Use ImmutableList.builder() for variable assignment."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="ImmutableMap\.Builder.*new ImmutableMap\.Builder"/>
+    <property name="message" value="Use ImmutableMap.builder() for variable assignment."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="ImmutableSet\.Builder.*new ImmutableSet\.Builder"/>
+    <property name="message" value="Use ImmutableSet.builder() for variable assignment."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="new TimePoint\(new DateTime\(\d+, .*UTC"/>
+    <property name="message" value="Use TimePoint.on(int, int, int, int, int, int, int)"/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="new TimePoint\(new LocalDate\(\d"/>
+    <property name="message" value="Use TimePoint.on(int, int, int)"/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*super\(\);"/>
+    <property name="message" value="This is unnecessary; please delete."/>
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*/\*\*.+" />
+    <property name="message" value="Should have a newline after /** comment start" />
+    <property name="fileExtensions" value=".java"/>    
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* [cC]reated by" />
+    <property name="message" value="no creation!" />
+    <property name="fileExtensions" value=".java"/>
+  </module>
+  <module name="RegexpMultiline">
+    <property name="format" value="System\.(out)|(err)\.print(ln)?\("/>
+    <property name="message" value="Should not use system out" />
+    <property name="fileExtensions" value=".java" />
+  </module>
+  <module name="RegexpMultiline">
+    <property name="format" value="^\s*\*\n^\s*\*/"/>
+    <property name="message" value="Should not have empty line before comment end"/>
+    <property name="fileExtensions" value=".java" />
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Change "/>
+    <property name="message" value="Should be: Changes"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Check "/>
+    <property name="message" value="Should be: Checks"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Compare "/>
+    <property name="message" value="Should be: Compares"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Convert "/>
+    <property name="message" value="Should be: Converts"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Create "/>
+    <property name="message" value="Should be: Creates"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Evaluate "/>
+    <property name="message" value="Should be: Evaluates"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Find "/>
+    <property name="message" value="Should be: Finds"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Get "/>
+    <property name="message" value="Should be: Gets"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Return "/>
+    <property name="message" value="Should be: Returns"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Set "/>
+    <property name="message" value="Should be: Sets"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value="^\s*\* Verify "/>
+    <property name="message" value="Should be: Verifies"/>
+  </module>
+  <module name="SuppressionCommentFilter"/>
+  <module name="Header">
+    <property name="headerFile" value="${samedir}/license.header" />
+    <property name="fileExtensions" value="java, ts" />
+  </module>
+</module>

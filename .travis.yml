@@ -1,0 +1,16 @@
+sudo: false
+language: java
+jdk:
+- oraclejdk7
+env:
+  global:
+  - secure: 4AqV6aPwgXvyha8j/O9zHIl0J1OkvkoDxU84DvUPxcwyj3ERB4nIHsVyo5HCm3q1NEsN1oTWnfr+8CurtHq0gUUdXM1WCC1VC5JTfSYzcrRo0pS+TKmF6IYtf2hApbRNw5mdgxIKEXw5guh269TSRznHh0OO/J8ggMM880VGKAFAP7YXwdQyBGIarSB4Xa9tq7DjIbSqZQBFzuNNLD19tAkYD2qHsaM1fLxScrfXUCoWG1wEZ864OzNLTsC+LGs9Je99HTXIXZspDdyJqIvme54aFtRQf6983RmFCjh8/U9/TAgvmRYYMhJCXBur1x+wmXeV7MycqIstqbjQIykCfaYJxB2U8jMABRi5cO1E+NerR1uBmCmRUa13r2QdaX2Q1PKJNSIquOybaCXB0N/oHZJ5Zdxa6My42YVyeXCpy7SwP1qeJh5iDlludP4xBV2w51PcyXEY/0vBO+sP1/gfJ4rbo9fZlpxSatL6A8FWQ9tguFIvjUufHQqyl8cuStnfS/nYgNqBWP6/6PcHWXDl9xInDtXMs+Opqo4VEbB87qDIFAxrZFnG6Zjdryaw582TISZfsiQBimCNqep1cvuXYuvBIVESQA8AjDuvT6VfSiejP36qtWujBouCwzH7rDmY1QcXzHPpFEaRQTr5YDm8hLSsgcVkjS0IAKrG5DJgO/M=
+after_success:
+- "./gradlew coveralls -PisCI"
+cache:
+  directories:
+  - "$HOME/.gradle/wrapper"
+  - "$HOME/.gradle/native"
+  - "$HOME/.gradle/caches/2.6"
+  - "$HOME/.gradle/caches/modules-2/files-2.1"
+  - "$HOME/.gradle/caches/modules-2/metadata-2.15"
