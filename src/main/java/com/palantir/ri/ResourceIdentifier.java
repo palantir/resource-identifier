@@ -14,21 +14,29 @@
 
 package com.palantir.ri;
 
+import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.codec.binary.StringUtils;
+
 public final class ResourceIdentifier {
     private static final String RID_CLASS = "ri";
+    private static final String RID32_CLASS = "ri32";
     private static final String SEPARATOR = ".";
     private static final String FIELD_REGEX = "([a-z][a-z0-9-]*)";
-    private static final String LOCATOR_REGEX = "([a-zA-Z0-9\\_\\-\\.]+)";
+    private static final String STRICT_LOCATOR_REGEX = "([a-zA-Z0-9\\_\\-\\.]+)";
+    private static final String BASE32_REGEX = "([A-Z2-7]+)";
 
     private static final Pattern FIELD_PATTERN = Pattern.compile(FIELD_REGEX);
-    private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
+    private static final Pattern STRICT_LOCATOR_PATTERN = Pattern.compile(STRICT_LOCATOR_REGEX);
     // creates a Pattern in form of <rid class>.<application>.<instance>.<type>.<locator>
-    private static final Pattern SPEC_PATTERN = Pattern.compile(
-            RID_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + LOCATOR_REGEX);
+    private static final Pattern RID_SPEC_PATTERN = Pattern.compile(
+            RID_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + STRICT_LOCATOR_REGEX);
+    private static final Pattern RID32_SPEC_PATTERN = Pattern.compile(
+            RID32_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + BASE32_REGEX);
 
     // fields are not final due to Jackson default constructor
     private String application;
@@ -65,8 +73,29 @@ public final class ResourceIdentifier {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(RID_CLASS).append(SEPARATOR).append(application).append(SEPARATOR)
-                .append(instance).append(SEPARATOR).append(type).append(SEPARATOR).append(locator);
+        boolean isStrict = STRICT_LOCATOR_PATTERN.matcher(locator).matches();
+
+        StringBuilder builder = new StringBuilder();
+
+        if (isStrict) {
+            builder.append(RID_CLASS);
+        } else {
+            builder.append(RID32_CLASS);
+        }
+        builder.append(SEPARATOR)
+               .append(application)
+               .append(SEPARATOR)
+               .append(instance)
+               .append(SEPARATOR)
+               .append(type)
+               .append(SEPARATOR);
+
+        if (isStrict) {
+            builder.append(locator);
+        } else {
+            builder.append(new Base32().encodeAsString(locator.getBytes(Charset.forName("UTF-8"))).replace("=", ""));
+        }
+
         return builder.toString();
     }
 
@@ -91,14 +120,19 @@ public final class ResourceIdentifier {
     }
 
     public static boolean isValid(String rid) {
-        return rid != null && SPEC_PATTERN.matcher(rid).matches();
+        return rid != null && (RID_SPEC_PATTERN.matcher(rid).matches() || RID32_SPEC_PATTERN.matcher(rid).matches());
     }
 
     public static ResourceIdentifier of(String rid) {
         if (rid != null) {
-            Matcher matcher = SPEC_PATTERN.matcher(rid);
+            Matcher matcher = RID_SPEC_PATTERN.matcher(rid);
             if (matcher.matches()) {
                 return new ResourceIdentifier(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+            }
+            matcher = RID32_SPEC_PATTERN.matcher(rid);
+            if (matcher.matches()) {
+                return new ResourceIdentifier(matcher.group(1), matcher.group(2), matcher.group(3),
+                        StringUtils.newStringUtf8(new Base32().decode(matcher.group(4))));
             }
         }
         throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
@@ -127,7 +161,7 @@ public final class ResourceIdentifier {
     }
 
     private static void checkLocatorIsValid(String value) {
-        if (value == null || !LOCATOR_PATTERN.matcher(value).matches()) {
+        if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Illegal locator format: " + value);
         }
     }
