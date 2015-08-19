@@ -14,14 +14,14 @@
 
 package com.palantir.ri;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -42,6 +42,7 @@ public final class ResourceIdentifierTest {
         goodIds.add("ri.my-app.instance1.graph-node._");
         goodIds.add("ri.my-app..graph-node.noInstance");
         goodIds.add("ri.my-app..graph-node.noInstance.extra.dots");
+        goodIds.add("ri32.app.instance.type.NZQW2ZJBIARQ");
 
         badIds = new ArrayList<>();
         badIds.add("");
@@ -94,12 +95,6 @@ public final class ResourceIdentifierTest {
             assertEquals("Illegal instance field format: Instance", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("app", "i", "type-name", "!@#$");
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal locator format: !@#$", e.getMessage());
-        }
-        try {
             ResourceIdentifier.of(null, null, null, null);
             fail();
         } catch (IllegalArgumentException e) {
@@ -120,6 +115,17 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
+    public void testRI32() {
+        ResourceIdentifier rid1 = ResourceIdentifier.of("app", "i", "type-name", "!@#$");
+        ResourceIdentifier rid2 = ResourceIdentifier.of("app", "i", "type-name", "test");
+        ResourceIdentifier rid3 = ResourceIdentifier.of("ri32.app.i.type-name.ORSXG5A");
+
+        assertEquals("ri32.app.i.type-name.EFACGJA", rid1.toString());
+        assertEquals("ri.app.i.type-name.test", rid2.toString());
+        assertEquals("ri.app.i.type-name.test", rid3.toString());
+    }
+
+    @Test
     public void testReconstruction() {
         for (String rid : goodIds) {
             ResourceIdentifier resourceId = ResourceIdentifier.of(rid);
@@ -136,6 +142,27 @@ public final class ResourceIdentifierTest {
         ObjectMapper om = new ObjectMapper();
         ResourceIdentifier rid = ResourceIdentifier.of("ri.app.instance.type.name");
         ResourceIdentifier rid1 = ResourceIdentifier.of("ri.app..type-123.aBC-name_123");
+        ResourceIdentifier rid2 = ResourceIdentifier.of("myapp", "instance-1", "folder", "foo.bar");
+        ResourceIdentifier rid3 = ResourceIdentifier.of("myapp", "", "data", "MyDATA");
+        String serializedString = om.writeValueAsString(rid);
+        String serializedString1 = om.writeValueAsString(rid1);
+        String serializedString2 = om.writeValueAsString(rid2);
+        String serializedString3 = om.writeValueAsString(rid3);
+        ResourceIdentifier value = om.readValue(serializedString, ResourceIdentifier.class);
+        ResourceIdentifier value1 = om.readValue(serializedString1, ResourceIdentifier.class);
+        ResourceIdentifier value2 = om.readValue(serializedString2, ResourceIdentifier.class);
+        ResourceIdentifier value3 = om.readValue(serializedString3, ResourceIdentifier.class);
+        assertEquals(rid, value);
+        assertEquals(rid1, value1);
+        assertEquals(rid2, value2);
+        assertEquals(rid3, value3);
+    }
+
+    @Test
+    public void testRI32Serialization() throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        ResourceIdentifier rid = ResourceIdentifier.of("ri32.app.instance.type.name");
+        ResourceIdentifier rid1 = ResourceIdentifier.of("ri32.app..type-123.aBC-name_123");
         ResourceIdentifier rid2 = ResourceIdentifier.of("myapp", "instance-1", "folder", "foo.bar");
         ResourceIdentifier rid3 = ResourceIdentifier.of("myapp", "", "data", "MyDATA");
         String serializedString = om.writeValueAsString(rid);

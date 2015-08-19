@@ -105,6 +105,7 @@ tasks.coveralls {
 }
 
 dependencies {
+    compile "commons-codec:commons-codec:1.10"
     testCompile "junit:junit:$junitVersion"
     testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 }
