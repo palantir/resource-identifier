@@ -57,6 +57,8 @@ public final class ResourceIdentifierTest {
         badIds.add("ri.app.instance.noLocator.");
         badIds.add("ri.app.instance.type.name!@#");
         badIds.add("ri.app(name)..folder.foo");
+        badIds.add("ri32.app.instance.type.NZQW2Z09JBIARQ");
+        badIds.add("ri32.app.instance.type.NZQW2ZJB_IARQ");
     }
 
     @Test
@@ -142,41 +144,24 @@ public final class ResourceIdentifierTest {
         ObjectMapper om = new ObjectMapper();
         ResourceIdentifier rid = ResourceIdentifier.of("ri.app.instance.type.name");
         ResourceIdentifier rid1 = ResourceIdentifier.of("ri.app..type-123.aBC-name_123");
-        ResourceIdentifier rid2 = ResourceIdentifier.of("myapp", "instance-1", "folder", "foo.bar");
-        ResourceIdentifier rid3 = ResourceIdentifier.of("myapp", "", "data", "MyDATA");
+        ResourceIdentifier rid2 = ResourceIdentifier.of("ri32.app.instance.type.ORSXG5A");
+        ResourceIdentifier rid3 = ResourceIdentifier.of("myapp", "instance-1", "folder", "foo.bar");
+        ResourceIdentifier rid4 = ResourceIdentifier.of("myapp", "", "data", "MyDATA");
         String serializedString = om.writeValueAsString(rid);
         String serializedString1 = om.writeValueAsString(rid1);
         String serializedString2 = om.writeValueAsString(rid2);
         String serializedString3 = om.writeValueAsString(rid3);
+        String serializedString4 = om.writeValueAsString(rid4);
         ResourceIdentifier value = om.readValue(serializedString, ResourceIdentifier.class);
         ResourceIdentifier value1 = om.readValue(serializedString1, ResourceIdentifier.class);
         ResourceIdentifier value2 = om.readValue(serializedString2, ResourceIdentifier.class);
         ResourceIdentifier value3 = om.readValue(serializedString3, ResourceIdentifier.class);
+        ResourceIdentifier value4 = om.readValue(serializedString4, ResourceIdentifier.class);
         assertEquals(rid, value);
         assertEquals(rid1, value1);
         assertEquals(rid2, value2);
         assertEquals(rid3, value3);
-    }
-
-    @Test
-    public void testRI32Serialization() throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        ResourceIdentifier rid = ResourceIdentifier.of("ri32.app.instance.type.name");
-        ResourceIdentifier rid1 = ResourceIdentifier.of("ri32.app..type-123.aBC-name_123");
-        ResourceIdentifier rid2 = ResourceIdentifier.of("myapp", "instance-1", "folder", "foo.bar");
-        ResourceIdentifier rid3 = ResourceIdentifier.of("myapp", "", "data", "MyDATA");
-        String serializedString = om.writeValueAsString(rid);
-        String serializedString1 = om.writeValueAsString(rid1);
-        String serializedString2 = om.writeValueAsString(rid2);
-        String serializedString3 = om.writeValueAsString(rid3);
-        ResourceIdentifier value = om.readValue(serializedString, ResourceIdentifier.class);
-        ResourceIdentifier value1 = om.readValue(serializedString1, ResourceIdentifier.class);
-        ResourceIdentifier value2 = om.readValue(serializedString2, ResourceIdentifier.class);
-        ResourceIdentifier value3 = om.readValue(serializedString3, ResourceIdentifier.class);
-        assertEquals(rid, value);
-        assertEquals(rid1, value1);
-        assertEquals(rid2, value2);
-        assertEquals(rid3, value3);
+        assertEquals(rid4, value4);
     }
 
     @Test

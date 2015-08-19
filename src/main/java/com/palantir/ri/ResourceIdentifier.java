@@ -28,7 +28,7 @@ public final class ResourceIdentifier {
     private static final String SEPARATOR = ".";
     private static final String FIELD_REGEX = "([a-z][a-z0-9-]*)";
     private static final String STRICT_LOCATOR_REGEX = "([a-zA-Z0-9\\_\\-\\.]+)";
-    private static final String LOCATOR_REGEX = "(.+)";
+    private static final String BASE32_REGEX = "([A-Z2-7]+)";
 
     private static final Pattern FIELD_PATTERN = Pattern.compile(FIELD_REGEX);
     private static final Pattern STRICT_LOCATOR_PATTERN = Pattern.compile(STRICT_LOCATOR_REGEX);
@@ -36,7 +36,7 @@ public final class ResourceIdentifier {
     private static final Pattern RID_SPEC_PATTERN = Pattern.compile(
             RID_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + STRICT_LOCATOR_REGEX);
     private static final Pattern RID32_SPEC_PATTERN = Pattern.compile(
-            RID32_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + LOCATOR_REGEX);
+            RID32_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + BASE32_REGEX);
 
     // fields are not final due to Jackson default constructor
     private String application;
