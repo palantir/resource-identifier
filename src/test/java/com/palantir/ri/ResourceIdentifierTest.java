@@ -36,26 +36,26 @@ public final class ResourceIdentifierTest {
     @BeforeClass
     public static void setUp() {
         goodIds = new ArrayList<>();
-        goodIds.add("ri.app.instance.folder.foo");
-        goodIds.add("ri.app-123.north-east.folder.foo.bar");
+        goodIds.add("ri.service.instance.folder.foo");
+        goodIds.add("ri.service-123.north-east.folder.foo.bar");
         goodIds.add("ri.a1p2p3.south-west.data-set.hello_WORLD-123");
-        goodIds.add("ri.my-app.instance1.graph-node._");
-        goodIds.add("ri.my-app..graph-node.noInstance");
-        goodIds.add("ri.my-app..graph-node.noInstance.extra.dots");
+        goodIds.add("ri.my-service.instance1.graph-node._");
+        goodIds.add("ri.service.1instance.type.name");
+        goodIds.add("ri.my-service..graph-node.noInstance");
+        goodIds.add("ri.my-service..graph-node.noInstance.extra.dots");
 
         badIds = new ArrayList<>();
         badIds.add("");
         badIds.add("badString");
         badIds.add("ri.123.instance.type.name");
-        badIds.add("ri.app.CAPLOCK.type.name");
-        badIds.add("ri.app.instance.-123.name");
-        badIds.add("ri..instance.type.noApp");
+        badIds.add("ri.service.CAPLOCK.type.name");
+        badIds.add("ri.service.instance.-123.name");
+        badIds.add("ri..instance.type.noService");
         badIds.add("id.bad.id.class.name");
-        badIds.add("ri.app.1instance.type.name");
-        badIds.add("ri:app::instance:type:name");
-        badIds.add("ri.app.instance.noLocator.");
-        badIds.add("ri.app.instance.type.name!@#");
-        badIds.add("ri.app(name)..folder.foo");
+        badIds.add("ri:service::instance:type:name");
+        badIds.add("ri.service.instance.noLocator.");
+        badIds.add("ri.service.instance.type.name!@#");
+        badIds.add("ri.service(name)..folder.foo");
     }
 
     @Test
@@ -82,19 +82,19 @@ public final class ResourceIdentifierTest {
             assertEquals("Illegal resource identifier format: ri.bad....dots", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("123App", "", "type", "name");
+            ResourceIdentifier.of("123Service", "", "type", "name");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Illegal application field format: 123App", e.getMessage());
+            assertEquals("Illegal service format: 123Service", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("app", "Instance", "type", "name");
+            ResourceIdentifier.of("service", "Instance", "type", "name");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Illegal instance field format: Instance", e.getMessage());
+            assertEquals("Illegal instance format: Instance", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("app", "i", "type-name", "!@#$");
+            ResourceIdentifier.of("service", "i", "type-name", "!@#$");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal locator format: !@#$", e.getMessage());
@@ -103,19 +103,19 @@ public final class ResourceIdentifierTest {
             ResourceIdentifier.of(null, null, null, null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Illegal application field format: null", e.getMessage());
+            assertEquals("Illegal service format: null", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("app", null, null, null);
+            ResourceIdentifier.of("service", null, null, null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Illegal instance field format: null", e.getMessage());
+            assertEquals("Illegal instance format: null", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("app", "", null, null);
+            ResourceIdentifier.of("service", "", null, null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Illegal type field format: null", e.getMessage());
+            assertEquals("Illegal type format: null", e.getMessage());
         }
     }
 
@@ -123,21 +123,21 @@ public final class ResourceIdentifierTest {
     public void testReconstruction() {
         for (String rid : goodIds) {
             ResourceIdentifier resourceId = ResourceIdentifier.of(rid);
-            String app = resourceId.getApplication();
+            String service = resourceId.getService();
             String instance = resourceId.getInstance();
             String type = resourceId.getType();
             String oid = resourceId.getLocator();
-            assertEquals(resourceId, ResourceIdentifier.of(app, instance, type, oid));
+            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, oid));
         }
     }
 
     @Test
     public void testSerialization() throws IOException {
         ObjectMapper om = new ObjectMapper();
-        ResourceIdentifier rid = ResourceIdentifier.of("ri.app.instance.type.name");
-        ResourceIdentifier rid1 = ResourceIdentifier.of("ri.app..type-123.aBC-name_123");
-        ResourceIdentifier rid2 = ResourceIdentifier.of("myapp", "instance-1", "folder", "foo.bar");
-        ResourceIdentifier rid3 = ResourceIdentifier.of("myapp", "", "data", "MyDATA");
+        ResourceIdentifier rid = ResourceIdentifier.of("ri.service.instance.type.name");
+        ResourceIdentifier rid1 = ResourceIdentifier.of("ri.service..type-123.aBC-name_123");
+        ResourceIdentifier rid2 = ResourceIdentifier.of("myservice", "instance-1", "folder", "foo.bar");
+        ResourceIdentifier rid3 = ResourceIdentifier.of("myservice", "", "data", "MyDATA");
         String serializedString = om.writeValueAsString(rid);
         String serializedString1 = om.writeValueAsString(rid1);
         String serializedString2 = om.writeValueAsString(rid2);
