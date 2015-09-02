@@ -21,17 +21,21 @@ import java.util.regex.Pattern;
 public final class ResourceIdentifier {
     private static final String RID_CLASS = "ri";
     private static final String SEPARATOR = ".";
-    private static final String FIELD_REGEX = "([a-z][a-z0-9-]*)";
-    private static final String LOCATOR_REGEX = "([a-zA-Z0-9\\_\\-\\.]+)";
+    private static final String SERVICE_REGEX = "([a-z][a-z0-9\\-]*)";
+    private static final String INSTANCE_REGEX = "([a-z0-9][a-z0-9\\-]*)?";
+    private static final String TYPE_REGEX = "([a-z][a-z0-9\\-]*)";
+    private static final String LOCATOR_REGEX = "([a-zA-Z0-9_\\-\\.]+)";
 
-    private static final Pattern FIELD_PATTERN = Pattern.compile(FIELD_REGEX);
+    private static final Pattern SERVICE_PATTERN = Pattern.compile(SERVICE_REGEX);
+    private static final Pattern INSTANCE_PATTERN = Pattern.compile(INSTANCE_REGEX);
+    private static final Pattern TYPE_PATTERN = Pattern.compile(TYPE_REGEX);
     private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
-    // creates a Pattern in form of <rid class>.<application>.<instance>.<type>.<locator>
+    // creates a Pattern in form of ri.<service>.<instance>.<type>.<locator>
     private static final Pattern SPEC_PATTERN = Pattern.compile(
-            RID_CLASS + "\\." + FIELD_REGEX + "\\." + FIELD_REGEX + "?\\." + FIELD_REGEX + "\\." + LOCATOR_REGEX);
+            RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
     // fields are not final due to Jackson default constructor
-    private String application;
+    private String service;
     private String instance;
     private String type;
     private String locator;
@@ -40,15 +44,15 @@ public final class ResourceIdentifier {
         // default constructor for Jackson
     }
 
-    private ResourceIdentifier(String application, String instance, String type, String locator) {
-        this.application = application;
+    private ResourceIdentifier(String service, String instance, String type, String locator) {
+        this.service = service;
         this.instance = instance == null ? "" : instance;
         this.type = type;
         this.locator = locator;
     }
 
-    public String getApplication() {
-        return application;
+    public String getService() {
+        return service;
     }
 
     public String getInstance() {
@@ -65,14 +69,17 @@ public final class ResourceIdentifier {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(RID_CLASS).append(SEPARATOR).append(application).append(SEPARATOR)
-                .append(instance).append(SEPARATOR).append(type).append(SEPARATOR).append(locator);
+        StringBuilder builder = new StringBuilder(RID_CLASS).append(SEPARATOR)
+                .append(service).append(SEPARATOR)
+                .append(instance).append(SEPARATOR)
+                .append(type).append(SEPARATOR)
+                .append(locator);
         return builder.toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(application, instance, type, locator);
+        return Objects.hash(service, instance, type, locator);
     }
 
     @Override
@@ -84,7 +91,7 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
-        return Objects.equals(application, other.application) &&
+        return Objects.equals(service, other.service) &&
                 Objects.equals(instance, other.instance) &&
                 Objects.equals(type, other.type) &&
                 Objects.equals(locator, other.locator);
@@ -104,25 +111,29 @@ public final class ResourceIdentifier {
         throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
     }
 
-    public static ResourceIdentifier of(String application, String instance, String type, String locator) {
-        checkFieldIsValid("application", application);
-        checkFieldIsValid("instance", instance, true);
-        checkFieldIsValid("type", type);
+    public static ResourceIdentifier of(String service, String instance, String type, String locator) {
+        checkServiceIsValid(service);
+        checkInstanceIsValid(instance);
+        checkTypeIsValid(type);
         checkLocatorIsValid(locator);
-
-        return new ResourceIdentifier(application, instance, type, locator);
+        return new ResourceIdentifier(service, instance, type, locator);
     }
 
-    private static void checkFieldIsValid(String fieldName, String value) {
-        checkFieldIsValid(fieldName, value, false);
-    }
-
-    private static void checkFieldIsValid(String fieldName, String value, boolean allowEmpty) {
-        if (allowEmpty && "".equals(value)) {
-            return;
+    private static void checkServiceIsValid(String service) {
+        if (service == null || !SERVICE_PATTERN.matcher(service).matches()) {
+            throw new IllegalArgumentException("Illegal service format: " + service);
         }
-        if (value == null || !FIELD_PATTERN.matcher(value).matches()) {
-            throw new IllegalArgumentException("Illegal " + fieldName + " field format: " + value);
+    }
+
+    private static void checkInstanceIsValid(String instance) {
+        if (instance == null || !INSTANCE_PATTERN.matcher(instance).matches()) {
+            throw new IllegalArgumentException("Illegal instance format: " + instance);
+        }
+    }
+
+    private static void checkTypeIsValid(String type) {
+        if (type == null || !TYPE_PATTERN.matcher(type).matches()) {
+            throw new IllegalArgumentException("Illegal type format: " + type);
         }
     }
 
