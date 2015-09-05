@@ -104,6 +104,8 @@ tasks.coveralls {
     dependsOn tasks.jacocoFullReport
 }
 
+tasks.check.dependsOn(javadoc)
+
 dependencies {
     testCompile "junit:junit:$junitVersion"
     testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
