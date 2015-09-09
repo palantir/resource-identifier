@@ -71,36 +71,36 @@ public final class ResourceIdentifier {
 
 
     /**
-     * Returns the service component
+     * Returns the service component.
      *
-     * @return the service component from the current identifier
+     * @return the service component from this identifier
      */
     public String getService() {
         return service;
     }
 
     /**
-     * Returns the instance component
+     * Returns the instance component.
      *
-     * @return the instance component from the current identifier
+     * @return the instance component from this identifier
      */
     public String getInstance() {
         return instance;
     }
 
     /**
-     * Returns the type component
+     * Returns the type component.
      *
-     * @return the type component from the current identifier
+     * @return the type component from this identifier
      */
     public String getType() {
         return type;
     }
 
     /**
-     * Returns the locator component
+     * Returns the locator component.
      *
-     * @return the locator component from the current identifier
+     * @return the locator component from this identifier
      */
     public String getLocator() {
         return locator;
@@ -125,7 +125,7 @@ public final class ResourceIdentifier {
 
     /**
      * Returns the hash code value for identifier.  The hash code
-     * is calculated using the Java @{code {@link Objects#hash(Object...)} method
+     * is calculated using the Java {@code {@link Objects#hash(Object...)} method
      * over each of the 4 components.
      *
      * @return the hash code value for this identifier
@@ -159,7 +159,7 @@ public final class ResourceIdentifier {
     }
 
     /**
-     * Checks if the input string is a valid resource identifier as defined in the specification
+     * Checks if the input string is a valid resource identifier as defined in the specification.
      *
      * @param rid the input string to be checked
      * @return {@code true} if and only if the input satisfy the resource identifier specification,
