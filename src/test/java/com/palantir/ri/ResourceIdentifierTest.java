@@ -16,6 +16,7 @@ package com.palantir.ri;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -153,6 +153,12 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
+    public void testStringConstruction() {
+        assertEquals("ri.service..type.name", ResourceIdentifier.of("service", "", "type", "name").toString());
+        assertEquals("ri.service.instance.type.name", ResourceIdentifier.of("service", "instance", "type", "name").toString());
+    }
+
+    @Test
     public void testEqualsHashCode() {
         ResourceIdentifier prevRid = null;
         for (int i = 0; i < goodIds.size(); ++i) {
@@ -160,12 +166,18 @@ public final class ResourceIdentifierTest {
             ResourceIdentifier curRid2 = ResourceIdentifier.of(goodIds.get(i));
             assertEquals(curRid, curRid);
             assertEquals(curRid, curRid2);
+            assertEquals(curRid.toString(), curRid2.toString());
             assertEquals(curRid.hashCode(), curRid2.hashCode());
+            assertNotEquals(curRid, NotEqualsObj.INSTANCE);
             if (prevRid != null) {
-                Assert.assertNotEquals(prevRid, curRid);
-                Assert.assertNotEquals(prevRid.hashCode(), curRid.hashCode());
+                assertNotEquals(prevRid, curRid);
+                assertNotEquals(prevRid.hashCode(), curRid.hashCode());
             }
             prevRid = curRid;
         }
+    }
+
+    private enum NotEqualsObj {
+        INSTANCE
     }
 }
