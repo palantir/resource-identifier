@@ -125,7 +125,7 @@ public final class ResourceIdentifier {
 
     /**
      * Returns the hash code value for identifier.  The hash code
-     * is calculated using the Java {@code {@link Objects#hash(Object...)} method
+     * is calculated using the Java {@link Objects#hash(Object...)} method
      * over each of the 4 components.
      *
      * @return the hash code value for this identifier
