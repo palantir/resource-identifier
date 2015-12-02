@@ -1,6 +1,6 @@
 Resource Identifier 
 ===================
-[![Build Status](https://magnum.travis-ci.com/palantir/resource-identifier.svg?token=a2W6r3g3xzxTyZqnjRYZ&branch=develop)](https://magnum.travis-ci.com/palantir/resource-identifier)
+[![Build Status](https://travis-ci.org/palantir/resource-identifier.svg?branch=develop)](https://travis-ci.org/palantir/resource-identifier.svg?branch=develop)
 [![Coverage Status](https://coveralls.io/repos/palantir/resource-identifier/badge.svg?branch=develop&service=github&t=KtNNqP)](https://coveralls.io/github/palantir/resource-identifier?branch=develop)
 
 Resource Identifiers offer a common encoding for wrapping existing unique identifiers with some additional
