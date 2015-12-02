@@ -84,7 +84,7 @@ coveralls {
 }
 
 tasks.coveralls {
-    onlyIf { getProject().hasProperty("isCI") }
+    onlyIf { System.getenv('CI') }
     dependsOn tasks.jacocoTestReport
 }
 
@@ -99,7 +99,7 @@ bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     pkg {
-        repo = 'releases-internal'
+        repo = 'releases'
         name = 'resource-identifier'
         userOrg = 'palantir'
         licenses = ['Apache-2.0']
@@ -108,7 +108,7 @@ bintray {
 }
 
 bintrayUpload.onlyIf {
-    project.version ==~ /\d+\.\d+\.\d+/
+    System.getenv('TRAVIS_TAG') && project.version ==~ /\d+\.\d+\.\d+/
 }
 
 bintrayUpload.dependsOn { generatePomFileForBintrayPublication }
