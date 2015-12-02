@@ -31,6 +31,10 @@ Resource Identifiers contain 5 components, prefixed by a format identifier `ri` 
  5. **Locator**: a string used to uniquely locate the specific resource. Must conform to regex pattern
     `[a-zA-Z0-9\-\._]+`.
 
+License
+-------
+This project is made available under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
+
 [1]:http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 [2]:https://en.wikipedia.org/wiki/Uniform_resource_name
 [3]:https://en.wikipedia.org/wiki/Uniform_resource_identifier
