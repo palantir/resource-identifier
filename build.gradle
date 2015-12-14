@@ -1,35 +1,41 @@
 plugins {
     id 'com.jfrog.bintray' version '1.2'
     id 'com.github.kt3k.coveralls' version '2.4.0'
-    id 'com.gradle.plugin-publish' version '0.9.1'
-    id 'com.palantir.git-version' version '0.1.3'
+    id 'com.palantir.git-version' version '0.3.0'
 
-    id 'checkstyle'
-    id 'eclipse'
-    id 'findbugs'
+    id 'com.palantir.baseline-checkstyle' version '0.2.2'
+    id 'com.palantir.baseline-eclipse' version '0.2.2'
+    id 'com.palantir.baseline-findbugs' version '0.2.2'
+    id 'com.palantir.baseline-idea' version '0.2.2'
+
     id 'jacoco'
     id 'java'
-    id 'idea'
     id 'maven-publish'
 }
 
-apply plugin: EclipseCheckstylePlugin
-apply plugin: JavaVersionPlugin
+sourceCompatibility = 1.7
 
 group 'com.palantir.ri'
 version gitVersion()
-
-javaVersion {
-    version '1.7'
-}
 
 repositories {
     jcenter()
 }
 
+dependencies {
+    testCompile "junit:junit:$junitVersion"
+    testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     classifier 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    destinationDir rootProject.file("${buildDir}/libs")
 }
 
 publishing {
@@ -39,43 +45,15 @@ publishing {
             artifact(sourceJar) {
                 classifier 'sources'
             }
+            artifact(javadocJar) {
+                classifier 'javadoc'
+            }
         }
     }
 }
 
-checkstyle {
-    configFile = file("${rootDir}/checkstyle/checkstyle.xml")
-    toolVersion = checkstyleVersion
-    configProperties = [samedir: "${rootDir}/checkstyle"]
-}
-
-findbugs {
-    toolVersion = findbugsVersion
-    effort = 'max'
-    reportLevel = 'medium'
-    findbugsTest {
-      excludeFilter = file("${rootDir}/findbugs/testExcludeFilter.xml")
-    }
-}
-
-tasks.withType(FindBugs) {
-    reports {
-        html.enabled = true
-        xml.enabled = false
-    }
-}
-
+tasks.check.dependsOn(javadoc)
 tasks.eclipse.dependsOn(tasks.cleanEclipse)
-
-eclipseClasspath.doLast {
-    eclipse.classpath.sourceSets.main.allSource.each { it.mkdirs() }
-    eclipse.classpath.sourceSets.main.output.each { it.mkdirs() }
-    eclipse.classpath.sourceSets.test.output.each { it.mkdirs() }
-}
-
-jacoco {
-    toolVersion = jacocoVersion
-}
 
 jacocoTestReport.reports.xml.enabled true
 
@@ -86,13 +64,6 @@ coveralls {
 tasks.coveralls {
     onlyIf { System.getenv('CI') }
     dependsOn tasks.jacocoTestReport
-}
-
-tasks.check.dependsOn(javadoc)
-
-dependencies {
-    testCompile "junit:junit:$junitVersion"
-    testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 }
 
 bintray {
@@ -107,11 +78,11 @@ bintray {
     }
 }
 
-bintrayUpload.onlyIf {
+tasks.bintrayUpload.onlyIf {
     System.getenv('TRAVIS_TAG') && project.version ==~ /\d+\.\d+\.\d+/
 }
 
-bintrayUpload.dependsOn { generatePomFileForBintrayPublication }
-bintrayUpload.dependsOn { sourceJar }
-bintrayUpload.dependsOn { build }
+tasks.bintrayUpload.dependsOn { generatePomFileForBintrayPublication }
+tasks.bintrayUpload.dependsOn { sourceJar }
+tasks.bintrayUpload.dependsOn { build }
 
