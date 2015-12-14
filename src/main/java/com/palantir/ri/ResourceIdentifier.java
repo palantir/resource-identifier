@@ -1,16 +1,18 @@
-// Copyright 2015 Palantir Technologies
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.palantir.ri;
 
@@ -29,12 +31,14 @@ import java.util.regex.Pattern;
  * {@code ri.<service>.<instance>.<type>.<context>.<locator>}
  * <ol>
  * <li> Service: a string that represents the service (or application) that namespaces the rest of the identifier.
- *      Must conform with regex pattern [a-z][a-z0-9\-]*
+ *      Must conform with regex pattern {@code [a-z][a-z0-9\-]*}
  * <li> Instance: an optionally empty string that represents a specific service cluster, to allow disambiguation of
- *      artifacts from different service clusters. Must conform to regex pattern ([a-z0-9][a-z0-9\-]*)?
- * <li> Type: a service-specific resource type to namespace a group of locators. Must conform to regex pattern [a-z][a-z0-9\-]*
- * <li> Context: a service-specific context. Must conform to regex pattern [a-zA-Z0-9_\-]*
- * <li> Locator: a string used to uniquely locate the specific resource. Must conform to regex pattern [a-zA-Z0-9\-\._]+
+ *      artifacts from different service clusters. Must conform to regex pattern {@code ([a-z0-9][a-z0-9\-]*)?}
+ * <li> Type: a service-specific resource type to namespace a group of locators. Must conform to regex pattern
+ *      {@code [a-z][a-z0-9\-]*}
+ * <li> Context: a service-specific context. Must conform to regex pattern {@code [a-zA-Z0-9_\-]*}
+ * <li> Locator: a string used to uniquely locate the specific resource. Must conform to regex pattern
+ *      {@code [a-zA-Z0-9\-\._]+}
  * </ol>
  */
 public final class ResourceIdentifier {
@@ -53,8 +57,8 @@ public final class ResourceIdentifier {
     private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
     // creates a Pattern in form of ri.<service>.<instance>.<type>.<context>.<locator>
     private static final Pattern SPEC_PATTERN = Pattern.compile(
-            RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." +
-            TYPE_REGEX + "\\." + CONTEXT_REGEX + "\\." + LOCATOR_REGEX);
+            RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\."
+            + TYPE_REGEX + "\\." + CONTEXT_REGEX + "\\." + LOCATOR_REGEX);
 
     // fields are not final due to Jackson default constructor
     private String service;
@@ -167,11 +171,11 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
-        return Objects.equals(service, other.service) &&
-                Objects.equals(instance, other.instance) &&
-                Objects.equals(type, other.type) &&
-                Objects.equals(context, other.context) &&
-                Objects.equals(locator, other.locator);
+        return Objects.equals(service, other.service)
+                && Objects.equals(instance, other.instance)
+                && Objects.equals(type, other.type)
+                && Objects.equals(context, other.context)
+                && Objects.equals(locator, other.locator);
     }
 
     /**
