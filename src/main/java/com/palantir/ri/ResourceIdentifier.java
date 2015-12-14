@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * <p>
  * Resource identifier specification:
  * <p>
- * Resource Identifiers contain 4 components, prefixed by a format identifier ri and separated with periods:
+ * Resource Identifiers contain 5 components, prefixed by a format identifier ri and separated with periods:
  * {@code ri.<service>.<instance>.<type>.<context>.<locator>}
  * <ol>
  * <li> Service: a string that represents the service (or application) that namespaces the rest of the identifier.
@@ -122,7 +122,7 @@ public final class ResourceIdentifier {
 
     /**
      * Returns a string representation of this ResourceIdentifier. The string representation
-     * follows the format specification using the "ri" header followed by the 4 components
+     * follows the format specification using the "ri" header followed by the 5 components
      * separated by periods.
      *
      * @return a string representation of this identifier
@@ -141,7 +141,7 @@ public final class ResourceIdentifier {
     /**
      * Returns the hash code value for identifier.  The hash code
      * is calculated using the Java {@link Objects#hash(Object...)} method
-     * over each of the 4 components.
+     * over each of the 5 components.
      *
      * @return the hash code value for this identifier
      */
@@ -153,7 +153,7 @@ public final class ResourceIdentifier {
     /**
      * Compares the specified object with this identifier for equality.  Returns
      * {@code true} if and only if the specified object is also a resource identifier and
-     * contain exactly the same values for all 4 components.
+     * contain exactly the same values for all 5 components.
      *
      * @param obj the object to be compared for equality with this identifier
      * @return {@code true} if the specified object is equal to this identifier, {@code false} otherwise
@@ -208,7 +208,7 @@ public final class ResourceIdentifier {
 
 
     /**
-     * Generates a new resource identifier object from each of the 4 input components. Each component must
+     * Generates a new resource identifier object from each of the 5 input components. Each component must
      * satisfy the requirements as defined by the specification.
      *
      * @param service input representing the service component
