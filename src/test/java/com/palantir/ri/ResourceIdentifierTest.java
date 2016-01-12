@@ -171,6 +171,18 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
+    public void testStringConstructionWithMultipleLocatorComponents() {
+        assertEquals("ri.service..type.context.name1",
+                ResourceIdentifier.of("service", "", "type", "context", "name1", new String[0]).toString());
+        assertEquals("ri.service..type.context.name1.name2",
+                ResourceIdentifier.of("service", "", "type", "context", "name1",
+                        new String[] {"name2"}).toString());
+        assertEquals("ri.service..type.context.name1.name2.name3",
+                ResourceIdentifier.of("service", "", "type", "context", "name1",
+                        new String[] {"name2", "name3"}).toString());
+    }
+
+    @Test
     public void testEqualsHashCode() {
         ResourceIdentifier prevRid = null;
         for (int i = 0; i < goodIds.size(); ++i) {
