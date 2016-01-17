@@ -233,6 +233,29 @@ public final class ResourceIdentifier {
         return new ResourceIdentifier(service, instance, type, context, locator);
     }
 
+    /**
+     * Generates a new resource identifier object from each of the input components. The locator component is produced
+     * by joining together locatorComponent and locatorComponents with the default separator.
+     *
+     * @param service input representing the service component
+     * @param instance input representing the instance component
+     * @param type input representing the type component
+     * @param context input representing the context component
+     * @param firstLocatorComponent the first part of the locator component
+     * @param locatorComponents the remaining locator components
+     * @return a resource identifier object representing the input components
+     *
+     * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
+     */
+    public static ResourceIdentifier of(String service, String instance, String type, String context,
+             String firstLocatorComponent, String... locatorComponents) {
+        StringBuilder builder = new StringBuilder(firstLocatorComponent);
+        for (String component : locatorComponents) {
+            builder.append(SEPARATOR).append(component);
+        }
+        return of(service, instance, type, context, builder.toString());
+    }
+
     private static void checkServiceIsValid(String service) {
         if (service == null || !SERVICE_PATTERN.matcher(service).matches()) {
             throw new IllegalArgumentException("Illegal service format: " + service);
