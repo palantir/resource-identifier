@@ -10,14 +10,14 @@ space.
 
 We use a format inspired by existing standards, such as [AWS ARNs][1], [URNs][2], and [URIs][3]:
 
-    ri.<service>.<instance>.<type>.<context>.<locator>
+    ri.<service>.<instance>.<type>.<locator>
 
 This project provides a basic utility class (`ResourceIdentifier`) to create and verify new identifier 
 strings that follow the specified format, and, parse existing identifier strings into component parts.
 
 Format
 ------
-Resource Identifiers contain 5 components, prefixed by a format identifier `ri` and separated with periods:
+Resource Identifiers contain 4 components, prefixed by a format identifier `ri` and separated with periods:
 
  1. **Service**: a string that represents the service (or application) that namespaces the rest of the 
     identifier. Must conform with regex pattern `[a-z][a-z0-9\-]*`.
@@ -26,9 +26,7 @@ Resource Identifiers contain 5 components, prefixed by a format identifier `ri` 
     `([a-z0-9][a-z0-9\-]*)?`.
  3. **Type**: a service-specific resource type to namespace a group of locators. Must conform to regex
     pattern `[a-z][a-z0-9\-]*`.
- 4. **Context**: a service-specific context related to the resource. Must conform to regex
-    pattern `[a-zA-Z0-9_\-]*`.
- 5. **Locator**: a string used to uniquely locate the specific resource. Must conform to regex pattern
+ 4. **Locator**: a string used to uniquely locate the specific resource. Must conform to regex pattern
     `[a-zA-Z0-9\-\._]+`.
 
 License
