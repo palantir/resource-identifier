@@ -23,12 +23,12 @@ import java.util.regex.Pattern;
 /**
  * Defines a common format for wrapping existing unique identifiers to provide additional context. This class
  * provides utility method: {@code #of(String)} to parse an existing identifier or the ability to generate new
- * identifiers by using provided context with method {@code #of(String, String, String, String)}.
+ * identifiers by using provided context with method {@code #of(String, String, String)}.
  * <p>
  * Resource identifier specification:
  * <p>
- * Resource Identifiers contain 5 components, prefixed by a format identifier ri and separated with periods:
- * {@code ri.<service>.<instance>.<type>.<context>.<locator>}
+ * Resource Identifiers contain 4 components, prefixed by a format identifier ri and separated with periods:
+ * {@code ri.<service>.<instance>.<type>.<locator>}
  * <ol>
  * <li> Service: a string that represents the service (or application) that namespaces the rest of the identifier.
  *      Must conform with regex pattern {@code [a-z][a-z0-9\-]*}
@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
  *      artifacts from different service clusters. Must conform to regex pattern {@code ([a-z0-9][a-z0-9\-]*)?}
  * <li> Type: a service-specific resource type to namespace a group of locators. Must conform to regex pattern
  *      {@code [a-z][a-z0-9\-]*}
- * <li> Context: a service-specific context. Must conform to regex pattern {@code [a-zA-Z0-9_\-]*}
  * <li> Locator: a string used to uniquely locate the specific resource. Must conform to regex pattern
  *      {@code [a-zA-Z0-9\-\._]+}
  * </ol>
@@ -47,35 +46,31 @@ public final class ResourceIdentifier {
     private static final String SERVICE_REGEX = "([a-z][a-z0-9\\-]*)";
     private static final String INSTANCE_REGEX = "([a-z0-9][a-z0-9\\-]*)?";
     private static final String TYPE_REGEX = "([a-z][a-z0-9\\-]*)";
-    private static final String CONTEXT_REGEX = "([a-zA-Z0-9_\\-]*)";
     private static final String LOCATOR_REGEX = "([a-zA-Z0-9_\\-\\.]+)";
 
     private static final Pattern SERVICE_PATTERN = Pattern.compile(SERVICE_REGEX);
     private static final Pattern INSTANCE_PATTERN = Pattern.compile(INSTANCE_REGEX);
     private static final Pattern TYPE_PATTERN = Pattern.compile(TYPE_REGEX);
-    private static final Pattern CONTEXT_PATTERN = Pattern.compile(CONTEXT_REGEX);
     private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
-    // creates a Pattern in form of ri.<service>.<instance>.<type>.<context>.<locator>
+    // creates a Pattern in form of ri.<service>.<instance>.<type>.<locator>
     private static final Pattern SPEC_PATTERN = Pattern.compile(
             RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\."
-            + TYPE_REGEX + "\\." + CONTEXT_REGEX + "\\." + LOCATOR_REGEX);
+            + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
     // fields are not final due to Jackson default constructor
     private String service;
     private String instance;
     private String type;
-    private String context;
     private String locator;
 
     private ResourceIdentifier() {
         // default constructor for Jackson
     }
 
-    private ResourceIdentifier(String service, String instance, String type, String context, String locator) {
+    private ResourceIdentifier(String service, String instance, String type, String locator) {
         this.service = service;
         this.instance = instance == null ? "" : instance;
         this.type = type;
-        this.context = context;
         this.locator = locator;
     }
 
@@ -107,15 +102,6 @@ public final class ResourceIdentifier {
     }
 
     /**
-     * Returns the context component.
-     *
-     * @return the context component from this identifier
-     */
-    public String getContext() {
-        return context;
-    }
-
-    /**
      * Returns the locator component.
      *
      * @return the locator component from this identifier
@@ -137,7 +123,6 @@ public final class ResourceIdentifier {
                 .append(service).append(SEPARATOR)
                 .append(instance).append(SEPARATOR)
                 .append(type).append(SEPARATOR)
-                .append(context).append(SEPARATOR)
                 .append(locator);
         return builder.toString();
     }
@@ -151,7 +136,7 @@ public final class ResourceIdentifier {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(service, instance, type, context, locator);
+        return Objects.hash(service, instance, type, locator);
     }
 
     /**
@@ -174,7 +159,6 @@ public final class ResourceIdentifier {
         return Objects.equals(service, other.service)
                 && Objects.equals(instance, other.instance)
                 && Objects.equals(type, other.type)
-                && Objects.equals(context, other.context)
                 && Objects.equals(locator, other.locator);
     }
 
@@ -204,7 +188,7 @@ public final class ResourceIdentifier {
             Matcher matcher = SPEC_PATTERN.matcher(rid);
             if (matcher.matches()) {
                 return new ResourceIdentifier(matcher.group(1), matcher.group(2), matcher.group(3),
-                    matcher.group(4), matcher.group(5));
+                    matcher.group(4));
             }
         }
         throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
@@ -218,19 +202,17 @@ public final class ResourceIdentifier {
      * @param service input representing the service component
      * @param instance input representing the instance component
      * @param type input representing the type component
-     * @param context input representing the context component
      * @param locator input representing the locator component
      * @return a resource identifier object representing the input components
      *
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
-    public static ResourceIdentifier of(String service, String instance, String type, String context, String locator) {
+    public static ResourceIdentifier of(String service, String instance, String type, String locator) {
         checkServiceIsValid(service);
         checkInstanceIsValid(instance);
         checkTypeIsValid(type);
-        checkContextIsValid(context);
         checkLocatorIsValid(locator);
-        return new ResourceIdentifier(service, instance, type, context, locator);
+        return new ResourceIdentifier(service, instance, type, locator);
     }
 
     /**
@@ -240,20 +222,19 @@ public final class ResourceIdentifier {
      * @param service input representing the service component
      * @param instance input representing the instance component
      * @param type input representing the type component
-     * @param context input representing the context component
      * @param firstLocatorComponent the first part of the locator component
      * @param locatorComponents the remaining locator components
      * @return a resource identifier object representing the input components
      *
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
-    public static ResourceIdentifier of(String service, String instance, String type, String context,
-             String firstLocatorComponent, String... locatorComponents) {
+    public static ResourceIdentifier of(String service, String instance, String type,
+            String firstLocatorComponent, String... locatorComponents) {
         StringBuilder builder = new StringBuilder(firstLocatorComponent);
         for (String component : locatorComponents) {
             builder.append(SEPARATOR).append(component);
         }
-        return of(service, instance, type, context, builder.toString());
+        return of(service, instance, type, builder.toString());
     }
 
     private static void checkServiceIsValid(String service) {
@@ -271,12 +252,6 @@ public final class ResourceIdentifier {
     private static void checkTypeIsValid(String type) {
         if (type == null || !TYPE_PATTERN.matcher(type).matches()) {
             throw new IllegalArgumentException("Illegal type format: " + type);
-        }
-    }
-
-    private static void checkContextIsValid(String context) {
-        if (context == null || !CONTEXT_PATTERN.matcher(context).matches()) {
-            throw new IllegalArgumentException("Illegal context format: " + context);
         }
     }
 

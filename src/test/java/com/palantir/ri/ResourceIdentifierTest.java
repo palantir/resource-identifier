@@ -36,29 +36,25 @@ public final class ResourceIdentifierTest {
     @BeforeClass
     public static void setUp() {
         goodIds = new ArrayList<>();
-        goodIds.add("ri.service.instance.folder.testContext.foo");
-        goodIds.add("ri.service-123.north-east.folder.context.foo.bar");
-        goodIds.add("ri.a1p2p3.south-west.data-set.my-context.hello_WORLD-123");
-        goodIds.add("ri.my-service.instance1.graph-node._._");
-        goodIds.add("ri.service.1instance.type.emptyContext.name");
-        goodIds.add("ri.my-service..graph-node.context.noInstance");
-        goodIds.add("ri.my-service.instance.graph-node..noContext");
+        goodIds.add("ri.service.instance.folder.foo");
+        goodIds.add("ri.service-123.north-east.folder.foo.bar");
+        goodIds.add("ri.a1p2p3.south-west.data-set.my-hello_WORLD-123");
+        goodIds.add("ri.my-service.instance1.graph-node.._");
+        goodIds.add("ri.service.1instance.type.emptyname");
+        goodIds.add("ri.my-service..graph-node.noInstance");
         goodIds.add("ri.my-service..graph-node.noInstance.multiple.extra.dots");
 
         badIds = new ArrayList<>();
         badIds.add("");
         badIds.add("badString");
-        badIds.add("ri.123.instance.type.context.name");
-        badIds.add("ri.service.CAPLOCK.type.context.name");
-        badIds.add("ri.service.instance.-123.context.name");
-        badIds.add("ri..instance.type.context.noService");
-        badIds.add("ri.service.instance.type..");
+        badIds.add("ri.service.CAPLOCK.type.name");
+        badIds.add("ri.service.instance.-123.name");
+        badIds.add("ri..instance.type.noService");
+        badIds.add("ri.service.instance.type.");
         badIds.add("id.bad.id.class.b.name");
-        badIds.add("ri:service::instance:type:context:name");
-        badIds.add("ri.service.instance.type.noLocator.");
-        badIds.add("ri.service.instance.type.context.name!@#");
-        badIds.add("ri.service.instance.type.context!@#.name");
-        badIds.add("ri.service(name)..folder.master.foo");
+        badIds.add("ri:service::instance:type:name");
+        badIds.add("ri.service.instance.type.name!@#");
+        badIds.add("ri.service(name)..folder.foo");
     }
 
     @Test
@@ -71,7 +67,7 @@ public final class ResourceIdentifierTest {
     @Test
     public void testIsValidBad() {
         for (String rid : badIds) {
-            assertFalse(ResourceIdentifier.isValid(rid));
+            assertFalse("bad rid " + rid, ResourceIdentifier.isValid(rid));
         }
         assertFalse(ResourceIdentifier.isValid(null));
     }
@@ -79,49 +75,43 @@ public final class ResourceIdentifierTest {
     @Test
     public void testConstructionErrorMessage() {
         try {
-            ResourceIdentifier.of("ri.bad.....dots");
+            ResourceIdentifier.of("ri.bad....dots");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Illegal resource identifier format: ri.bad.....dots", e.getMessage());
+            assertEquals("Illegal resource identifier format: ri.bad....dots", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("123Service", "", "type", "context", "name");
+            ResourceIdentifier.of("123Service", "", "type", "name");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal service format: 123Service", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("service", "Instance", "type", "context", "name");
+            ResourceIdentifier.of("service", "Instance", "type", "name");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal instance format: Instance", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("service", "i", "type-name", "!@#$", "name");
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal context format: !@#$", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("service", "i", "type-name", "context", "!@#$");
+            ResourceIdentifier.of("service", "i", "type-name", "!@#$");
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal locator format: !@#$", e.getMessage());
         }
         try {
-            ResourceIdentifier.of(null, null, null, null, null);
+            ResourceIdentifier.of(null, null, null, null);
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal service format: null", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("service", null, null, null, null);
+            ResourceIdentifier.of("service", null, null, null);
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal instance format: null", e.getMessage());
         }
         try {
-            ResourceIdentifier.of("service", "", null, null, null);
+            ResourceIdentifier.of("service", "", null, null);
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Illegal type format: null", e.getMessage());
@@ -135,19 +125,18 @@ public final class ResourceIdentifierTest {
             String service = resourceId.getService();
             String instance = resourceId.getInstance();
             String type = resourceId.getType();
-            String context = resourceId.getContext();
             String oid = resourceId.getLocator();
-            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, context, oid));
+            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, oid));
         }
     }
 
     @Test
     public void testSerialization() throws IOException {
         ObjectMapper om = new ObjectMapper();
-        ResourceIdentifier rid = ResourceIdentifier.of("ri.service.instance.type.context.name");
-        ResourceIdentifier rid1 = ResourceIdentifier.of("ri.service..type-123.context-_9.aBC-name_123");
-        ResourceIdentifier rid2 = ResourceIdentifier.of("myservice", "instance-1", "folder", "my-contexT", "foo.bar");
-        ResourceIdentifier rid3 = ResourceIdentifier.of("myservice", "", "data", "_myContext_", "MyDATA");
+        ResourceIdentifier rid = ResourceIdentifier.of("ri.service.instance.type.name");
+        ResourceIdentifier rid1 = ResourceIdentifier.of("ri.service..type-123.aBC-name_123");
+        ResourceIdentifier rid2 = ResourceIdentifier.of("myservice", "instance-1", "folder", "foo.bar");
+        ResourceIdentifier rid3 = ResourceIdentifier.of("myservice", "", "data", "MyDATA");
         String serializedString = om.writeValueAsString(rid);
         String serializedString1 = om.writeValueAsString(rid1);
         String serializedString2 = om.writeValueAsString(rid2);
@@ -164,21 +153,21 @@ public final class ResourceIdentifierTest {
 
     @Test
     public void testStringConstruction() {
-        assertEquals("ri.service..type.context.name",
-                ResourceIdentifier.of("service", "", "type", "context", "name").toString());
-        assertEquals("ri.service.instance.type.ctx.name",
-                ResourceIdentifier.of("service", "instance", "type", "ctx", "name").toString());
+        assertEquals("ri.service..type.name",
+                ResourceIdentifier.of("service", "", "type", "name").toString());
+        assertEquals("ri.service.instance.type.name",
+                ResourceIdentifier.of("service", "instance", "type", "name").toString());
     }
 
     @Test
     public void testStringConstructionWithMultipleLocatorComponents() {
-        assertEquals("ri.service..type.context.name1",
-                ResourceIdentifier.of("service", "", "type", "context", "name1", new String[0]).toString());
-        assertEquals("ri.service..type.context.name1.name2",
-                ResourceIdentifier.of("service", "", "type", "context", "name1",
+        assertEquals("ri.service..type.name1",
+                ResourceIdentifier.of("service", "", "type", "name1", new String[0]).toString());
+        assertEquals("ri.service..type.name1.name2",
+                ResourceIdentifier.of("service", "", "type", "name1",
                         new String[] {"name2"}).toString());
-        assertEquals("ri.service..type.context.name1.name2.name3",
-                ResourceIdentifier.of("service", "", "type", "context", "name1",
+        assertEquals("ri.service..type.name1.name2.name3",
+                ResourceIdentifier.of("service", "", "type", "name1",
                         new String[] {"name2", "name3"}).toString());
     }
 
