@@ -2,6 +2,8 @@ Resource Identifier
 ===================
 [![Build Status](https://travis-ci.org/palantir/resource-identifier.svg?branch=develop)](https://travis-ci.org/palantir/resource-identifier)
 [![Coverage Status](https://coveralls.io/repos/palantir/resource-identifier/badge.svg?branch=develop&service=github&t=KtNNqP)](https://coveralls.io/github/palantir/resource-identifier?branch=develop)
+[![JCenter Release](https://img.shields.io/github/release/palantir/resource-identifier.svg)](
+http://jcenter.bintray.com/com/palantir/ri/)
 
 Resource Identifiers offer a common encoding for wrapping existing unique identifiers with some additional
 context that can be useful when storing those identifiers in other applications. Additionally, the context
@@ -14,6 +16,8 @@ We use a format inspired by existing standards, such as [AWS ARNs][1], [URNs][2]
 
 This project provides a basic utility class (`ResourceIdentifier`) to create and verify new identifier 
 strings that follow the specified format, and, parse existing identifier strings into component parts.
+
+**Maven Coordinates** `com.palantir.ri:resource-identifier:<version>`
 
 Format
 ------
