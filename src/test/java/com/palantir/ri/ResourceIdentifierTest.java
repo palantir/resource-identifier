@@ -131,6 +131,13 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
+    public void testValueOf() {
+        ResourceIdentifier of = ResourceIdentifier.of("ri.service.instance.type.name");
+        ResourceIdentifier valueOf = ResourceIdentifier.valueOf("ri.service.instance.type.name");
+        assertEquals(of, valueOf);
+    }
+
+    @Test
     public void testSerialization() throws IOException {
         ObjectMapper om = new ObjectMapper();
         ResourceIdentifier rid = ResourceIdentifier.of("ri.service.instance.type.name");

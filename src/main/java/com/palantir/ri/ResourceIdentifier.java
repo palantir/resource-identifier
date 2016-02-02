@@ -174,6 +174,15 @@ public final class ResourceIdentifier {
     }
 
     /**
+     * Same as {@link #of(String)}. Included to support JAX-RS
+     * <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/PathParam.html">
+     * query and path parameters</a>
+     */
+    public static ResourceIdentifier valueOf(String rid) {
+        return of(rid);
+    }
+
+    /**
      * Generates a new resource identifier object from the input string. This method will validate
      * that the input is a valid resource identifier string as defined by the specification prior
      * to creating the object.
