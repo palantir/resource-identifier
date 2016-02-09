@@ -73,6 +73,30 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
+    public void testIsValidService() {
+        assertTrue(ResourceIdentifier.isValidService("valid-service-123"));
+        assertFalse(ResourceIdentifier.isValidService("invalid.service!"));
+    }
+
+    @Test
+    public void testIsValidInstance() {
+        assertTrue(ResourceIdentifier.isValidInstance("valid-instance-123"));
+        assertFalse(ResourceIdentifier.isValidInstance("invalid.instance!"));
+    }
+
+    @Test
+    public void testIsValidType() {
+        assertTrue(ResourceIdentifier.isValidType("valid-type-123"));
+        assertFalse(ResourceIdentifier.isValidType("invalid.type!"));
+    }
+
+    @Test
+    public void testIsValidLocator() {
+        assertTrue(ResourceIdentifier.isValidLocator("valid-Locator_123."));
+        assertFalse(ResourceIdentifier.isValidLocator("invalid.locator!"));
+    }
+
+    @Test
     public void testConstructionErrorMessage() {
         try {
             ResourceIdentifier.of("ri.bad....dots");
