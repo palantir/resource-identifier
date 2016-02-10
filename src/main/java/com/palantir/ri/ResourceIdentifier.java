@@ -174,6 +174,50 @@ public final class ResourceIdentifier {
     }
 
     /**
+     * Checks if the input string is a valid service as defined in the specification.
+     *
+     * @param service the input string to be checked
+     * @return {@code true} if and only if the input satisfy the service specification,
+     *         {@code false} otherwise.
+     */
+    public static boolean isValidService(String service) {
+        return service != null && SERVICE_PATTERN.matcher(service).matches();
+    }
+
+    /**
+     * Checks if the input string is a valid instance as defined in the specification.
+     *
+     * @param instance the input string to be checked
+     * @return {@code true} if and only if the input satisfy the instance specification,
+     *         {@code false} otherwise.
+     */
+    public static boolean isValidInstance(String instance) {
+        return instance != null && INSTANCE_PATTERN.matcher(instance).matches();
+    }
+
+    /**
+     * Checks if the input string is a valid type as defined in the specification.
+     *
+     * @param type the input string to be checked
+     * @return {@code true} if and only if the input satisfy the type specification,
+     *         {@code false} otherwise.
+     */
+    public static boolean isValidType(String type) {
+        return type != null && TYPE_PATTERN.matcher(type).matches();
+    }
+
+    /**
+     * Checks if the input string is a valid locator as defined in the specification.
+     *
+     * @param locator the input string to be checked
+     * @return {@code true} if and only if the input satisfy the locator specification,
+     *         {@code false} otherwise.
+     */
+    public static boolean isValidLocator(String locator) {
+        return locator != null && LOCATOR_PATTERN.matcher(locator).matches();
+    }
+
+    /**
      * Same as {@link #of(String)}. Included to support JAX-RS
      * <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/PathParam.html">
      * query and path parameters</a>
@@ -247,26 +291,27 @@ public final class ResourceIdentifier {
     }
 
     private static void checkServiceIsValid(String service) {
-        if (service == null || !SERVICE_PATTERN.matcher(service).matches()) {
+        if (!isValidService(service)) {
             throw new IllegalArgumentException("Illegal service format: " + service);
         }
     }
 
     private static void checkInstanceIsValid(String instance) {
-        if (instance == null || !INSTANCE_PATTERN.matcher(instance).matches()) {
+        if (!isValidInstance(instance)) {
             throw new IllegalArgumentException("Illegal instance format: " + instance);
         }
     }
 
     private static void checkTypeIsValid(String type) {
-        if (type == null || !TYPE_PATTERN.matcher(type).matches()) {
+        if (!isValidType(type)) {
             throw new IllegalArgumentException("Illegal type format: " + type);
         }
     }
 
     private static void checkLocatorIsValid(String value) {
-        if (value == null || !LOCATOR_PATTERN.matcher(value).matches()) {
+        if (!isValidLocator(value)) {
             throw new IllegalArgumentException("Illegal locator format: " + value);
         }
     }
+
 }
