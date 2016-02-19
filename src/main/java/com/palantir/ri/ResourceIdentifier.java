@@ -16,6 +16,8 @@
 
 package com.palantir.ri;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,15 +59,10 @@ public final class ResourceIdentifier {
             RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\."
             + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
-    // fields are not final due to Jackson default constructor
-    private String service;
-    private String instance;
-    private String type;
-    private String locator;
-
-    private ResourceIdentifier() {
-        // default constructor for Jackson
-    }
+    private final String service;
+    private final String instance;
+    private final String type;
+    private final String locator;
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
         this.service = service;
@@ -118,6 +115,7 @@ public final class ResourceIdentifier {
      * @return a string representation of this identifier
      */
     @Override
+    @JsonValue
     public String toString() {
         StringBuilder builder = new StringBuilder(RID_CLASS).append(SEPARATOR)
                 .append(service).append(SEPARATOR)
@@ -222,6 +220,7 @@ public final class ResourceIdentifier {
      * <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/PathParam.html">
      * query and path parameters</a>
      */
+    @JsonCreator
     public static ResourceIdentifier valueOf(String rid) {
         return of(rid);
     }
