@@ -59,15 +59,10 @@ public final class ResourceIdentifier {
             RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\."
             + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
-    // fields are not final due to Jackson default constructor
-    private String service;
-    private String instance;
-    private String type;
-    private String locator;
-
-    private ResourceIdentifier() {
-        // default constructor for Jackson
-    }
+    private final String service;
+    private final String instance;
+    private final String type;
+    private final String locator;
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
         this.service = service;
