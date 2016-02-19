@@ -3,15 +3,17 @@ plugins {
     id 'com.github.kt3k.coveralls' version '2.4.0'
     id 'com.palantir.git-version' version '0.3.0'
 
-    id 'com.palantir.baseline-checkstyle' version '0.2.2'
-    id 'com.palantir.baseline-eclipse' version '0.2.2'
-    id 'com.palantir.baseline-findbugs' version '0.2.2'
-    id 'com.palantir.baseline-idea' version '0.2.2'
+    id 'com.palantir.baseline-checkstyle' version '0.2.5'
+    id 'com.palantir.baseline-eclipse' version '0.2.5'
+    id 'com.palantir.baseline-findbugs' version '0.2.5'
+    id 'com.palantir.baseline-idea' version '0.2.5'
 
     id 'jacoco'
     id 'java'
     id 'maven-publish'
 }
+
+apply plugin: 'com.palantir.baseline-config'
 
 sourceCompatibility = 1.7
 
