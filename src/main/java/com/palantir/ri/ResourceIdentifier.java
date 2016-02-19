@@ -16,6 +16,8 @@
 
 package com.palantir.ri;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,6 +120,7 @@ public final class ResourceIdentifier {
      * @return a string representation of this identifier
      */
     @Override
+    @JsonValue
     public String toString() {
         StringBuilder builder = new StringBuilder(RID_CLASS).append(SEPARATOR)
                 .append(service).append(SEPARATOR)
@@ -222,6 +225,7 @@ public final class ResourceIdentifier {
      * <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/PathParam.html">
      * query and path parameters</a>
      */
+    @JsonCreator
     public static ResourceIdentifier valueOf(String rid) {
         return of(rid);
     }

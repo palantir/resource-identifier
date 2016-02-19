@@ -23,8 +23,9 @@ repositories {
 }
 
 dependencies {
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+
     testCompile "junit:junit:$junitVersion"
-    testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 }
 
 task sourceJar(type: Jar) {

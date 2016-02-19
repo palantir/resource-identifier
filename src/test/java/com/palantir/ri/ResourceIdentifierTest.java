@@ -164,8 +164,12 @@ public final class ResourceIdentifierTest {
     @Test
     public void testSerialization() throws IOException {
         ObjectMapper om = new ObjectMapper();
-        ResourceIdentifier rid = ResourceIdentifier.of("ri.service.instance.type.name");
-        ResourceIdentifier rid1 = ResourceIdentifier.of("ri.service..type-123.aBC-name_123");
+        String ridString = "ri.service.instance.type.name";
+        String ridString1 = "ri.service..type-123.aBC-name_123";
+        String ridString2 = "ri.myservice.instance-1.folder.foo.bar";
+        String ridString3 = "ri.myservice..data.MyDATA";
+        ResourceIdentifier rid = ResourceIdentifier.of(ridString);
+        ResourceIdentifier rid1 = ResourceIdentifier.of(ridString1);
         ResourceIdentifier rid2 = ResourceIdentifier.of("myservice", "instance-1", "folder", "foo.bar");
         ResourceIdentifier rid3 = ResourceIdentifier.of("myservice", "", "data", "MyDATA");
         String serializedString = om.writeValueAsString(rid);
@@ -176,10 +180,18 @@ public final class ResourceIdentifierTest {
         ResourceIdentifier value1 = om.readValue(serializedString1, ResourceIdentifier.class);
         ResourceIdentifier value2 = om.readValue(serializedString2, ResourceIdentifier.class);
         ResourceIdentifier value3 = om.readValue(serializedString3, ResourceIdentifier.class);
+        assertEquals(toJsonString(ridString), serializedString);
+        assertEquals(toJsonString(ridString1), serializedString1);
+        assertEquals(toJsonString(ridString2), serializedString2);
+        assertEquals(toJsonString(ridString3), serializedString3);
         assertEquals(rid, value);
         assertEquals(rid1, value1);
         assertEquals(rid2, value2);
         assertEquals(rid3, value3);
+    }
+
+    private String toJsonString(String string) {
+        return String.format("\"%s\"", string);
     }
 
     @Test
