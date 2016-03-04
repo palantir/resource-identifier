@@ -1,0 +1,8 @@
+apply from: "${rootDir}/gradle/publish-libs.gradle"
+
+dependencies {
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+}

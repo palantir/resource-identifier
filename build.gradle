@@ -1,92 +1,53 @@
-plugins {
-    id 'com.jfrog.bintray' version '1.2'
-    id 'com.github.kt3k.coveralls' version '2.4.0'
-    id 'com.palantir.git-version' version '0.3.0'
+buildscript {
+    repositories {
+        jcenter()
+    }
 
-    id 'com.palantir.baseline-checkstyle' version '0.2.5'
-    id 'com.palantir.baseline-eclipse' version '0.2.5'
-    id 'com.palantir.baseline-findbugs' version '0.2.5'
-    id 'com.palantir.baseline-idea' version '0.2.5'
-
-    id 'jacoco'
-    id 'java'
-    id 'maven-publish'
+    dependencies {
+        classpath "com.palantir:gradle-baseline-java:${baselineVersion}"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:${bintrayPluginVersion}"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0"
+    }
 }
 
-apply plugin: 'com.palantir.baseline-config'
+plugins {
+    id 'com.palantir.git-version' version '0.4.0'
+    id 'org.inferred.processors' version '1.1.2'
+}
 
-sourceCompatibility = 1.7
-
-group 'com.palantir.ri'
-version gitVersion()
+apply plugin: 'com.palantir.baseline-config' // provides baselineUpdateConfig task
+apply plugin: 'com.palantir.baseline-idea'
 
 repositories {
-    jcenter()
+    jcenter() // needed for baselineUpdateConfig task
 }
 
-dependencies {
-    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-
-    testCompile "junit:junit:$junitVersion"
-    testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+allprojects {
+    version gitVersion()
+    group 'com.palantir.palantir.ri'
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier 'sources'
-}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.palantir.baseline-checkstyle'
+    apply plugin: 'com.palantir.baseline-eclipse'
+    apply plugin: 'com.palantir.baseline-findbugs'
+    apply plugin: 'com.palantir.baseline-idea'
+    apply plugin: 'org.inferred.processors'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-    destinationDir rootProject.file("${buildDir}/libs")
-}
+    repositories {
+        jcenter()
+    }
 
-publishing {
-    publications {
-        bintray(MavenPublication) {
-            from components.java
-            artifact(sourceJar) {
-                classifier 'sources'
-            }
-            artifact(javadocJar) {
-                classifier 'javadoc'
-            }
-        }
+    javadoc {
+        classpath = sourceSets.main.compileClasspath + configurations.processor
+    }
+
+    sourceCompatibility = 1.7
+
+    if (System.env.CIRCLE_TEST_REPORTS) {
+        test.reports.junitXml.destination = new File(System.env.CIRCLE_TEST_REPORTS, it.getName())
     }
 }
-
-tasks.check.dependsOn(javadoc)
-tasks.eclipse.dependsOn(tasks.cleanEclipse)
-
-jacocoTestReport.reports.xml.enabled true
-
-coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-}
-
-tasks.coveralls {
-    onlyIf { System.getenv('CI') }
-    dependsOn tasks.jacocoTestReport
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    pkg {
-        repo = 'releases'
-        name = 'resource-identifier'
-        userOrg = 'palantir'
-        licenses = ['Apache-2.0']
-        publications = ['bintray']
-    }
-}
-
-tasks.bintrayUpload.onlyIf {
-    System.getenv('TRAVIS_TAG') && project.version ==~ /\d+\.\d+\.\d+/
-}
-
-tasks.bintrayUpload.dependsOn { generatePomFileForBintrayPublication }
-tasks.bintrayUpload.dependsOn { sourceJar }
-tasks.bintrayUpload.dependsOn { build }
-
