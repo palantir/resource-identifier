@@ -1,0 +1,24 @@
+machine:
+  java:
+    version: oraclejdk8
+  environment:
+    TERM: dumb
+
+general:
+  artifacts:
+    - resource-identifier/build/libs
+
+test:
+  override:
+    - ./gradlew build
+
+deployment:
+  develop:
+    branch: develop
+    commands:
+     - ./gradlew -i artifactoryPublish
+  release:
+    tag: /[0-9]+(\.[0-9]+)+/
+    commands:
+      - ./gradlew -i bintrayUpload
+
