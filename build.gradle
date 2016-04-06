@@ -1,6 +1,6 @@
 plugins {
     id 'com.jfrog.bintray' version '1.2'
-    id 'com.github.kt3k.coveralls' version '2.4.0'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
     id 'com.palantir.git-version' version '0.3.0'
 
     id 'com.palantir.baseline-checkstyle' version '0.2.5'
@@ -60,15 +60,6 @@ tasks.check.dependsOn(javadoc)
 tasks.eclipse.dependsOn(tasks.cleanEclipse)
 
 jacocoTestReport.reports.xml.enabled true
-
-coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-}
-
-tasks.coveralls {
-    onlyIf { System.getenv('CI') }
-    dependsOn tasks.jacocoTestReport
-}
 
 bintray {
     user = System.getenv('BINTRAY_USER')
