@@ -243,7 +243,7 @@ public final class ResourceIdentifier {
                     matcher.group(4));
             }
         }
-        throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
+        throw new IllegalArgumentException("Illegal resource identifier: '" + rid + "' does not match format: " + SPEC_PATTERN);
     }
 
 
