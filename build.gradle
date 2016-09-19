@@ -1,12 +1,17 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.palantir:gradle-baseline-java:0.8.0'
+    }
+}
+
 plugins {
     id 'com.jfrog.bintray' version '1.2'
     id 'com.github.kt3k.coveralls' version '2.6.3'
     id 'com.palantir.git-version' version '0.3.0'
-
-    id 'com.palantir.baseline-checkstyle' version '0.2.5'
-    id 'com.palantir.baseline-eclipse' version '0.2.5'
-    id 'com.palantir.baseline-findbugs' version '0.2.5'
-    id 'com.palantir.baseline-idea' version '0.2.5'
 
     id 'jacoco'
     id 'java'
@@ -14,6 +19,11 @@ plugins {
 }
 
 apply plugin: 'com.palantir.baseline-config'
+
+apply plugin: 'com.palantir.baseline-checkstyle'
+apply plugin: 'com.palantir.baseline-eclipse'
+apply plugin: 'com.palantir.baseline-findbugs'
+apply plugin: 'com.palantir.baseline-idea'
 
 sourceCompatibility = 1.7
 
