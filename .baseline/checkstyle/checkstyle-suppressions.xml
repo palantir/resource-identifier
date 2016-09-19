@@ -14,6 +14,9 @@
     <!-- JavadocStyle enforces existence of package-info.java package-level Javadoc; we consider this a bug. -->
     <suppress files="package-info.java" checks="JavadocStyle" />
 
+    <!-- ResourceIdentifier should not be final. -->
+    <suppress files="ResourceIdentifier.java" checks="FinalClass" />
+
     <!-- non-code classes -->
     <suppress files="\.(bdr|eot|gif|gzip|jar|json|otf|png|svg|ttf|woff|zip)$" checks="FileTabCharacter" />
     <suppress files="\.(bdr|eot|gif|gzip|jar|json|otf|png|svg|ttf|woff|zip)$" checks="NewlineAtEndOfFile" />
