@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  *      {@code [a-zA-Z0-9\-\._]+}
  * </ol>
  */
-public final class ResourceIdentifier {
+public class ResourceIdentifier {
     private static final String RID_CLASS = "ri";
     private static final String SEPARATOR = ".";
     private static final String SERVICE_REGEX = "([a-z][a-z0-9\\-]*)";
