@@ -86,10 +86,6 @@ bintray {
     }
 }
 
-tasks.bintrayUpload.onlyIf {
-    System.getenv('TRAVIS_TAG') && project.version ==~ /\d+\.\d+\.\d+/
-}
-
 tasks.bintrayUpload.dependsOn { generatePomFileForBintrayPublication }
 tasks.bintrayUpload.dependsOn { sourceJar }
 tasks.bintrayUpload.dependsOn { build }
