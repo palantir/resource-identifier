@@ -71,7 +71,6 @@ publishing {
 }
 
 tasks.check.dependsOn(javadoc)
-tasks.eclipse.dependsOn(tasks.cleanEclipse)
 
 jacocoTestReport.reports.xml.enabled true
 
