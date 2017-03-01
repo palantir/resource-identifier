@@ -1,6 +1,6 @@
 machine:
   java:
-    version: oraclejdk7
+    version: oraclejdk8
   environment:
     TERM: dumb
 
@@ -11,8 +11,6 @@ general:
 test:
   override:
     - ./gradlew --parallel build
-  post:
-    - ./gradlew jacocoTestReport coveralls
 
 deployment:
   release:

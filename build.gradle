@@ -10,7 +10,6 @@ buildscript {
 
 plugins {
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
     id 'com.palantir.git-version' version '0.5.2'
 
     id 'jacoco'
@@ -71,8 +70,6 @@ publishing {
 }
 
 tasks.check.dependsOn(javadoc)
-
-jacocoTestReport.reports.xml.enabled true
 
 bintray {
     user = System.getenv('BINTRAY_USER')
