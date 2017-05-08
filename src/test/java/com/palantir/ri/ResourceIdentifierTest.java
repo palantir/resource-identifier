@@ -34,7 +34,7 @@ public final class ResourceIdentifierTest {
     private static List<String> badIds;
 
     @BeforeClass
-    public static void setUp() {
+    public static void beforeClass() {
         goodIds = new ArrayList<>();
         goodIds.add("ri.service.instance.folder.foo");
         goodIds.add("ri.service-123.north-east.folder.foo.bar");

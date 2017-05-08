@@ -1,16 +1,16 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://palantir.bintray.com/releases/' }
     }
 
     dependencies {
-        classpath 'com.palantir:gradle-baseline-java:0.9.1'
+        classpath 'com.palantir.baseline:gradle-baseline-java:0.14.0'
     }
 }
 
 plugins {
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
     id 'com.palantir.git-version' version '0.5.2'
 
     id 'jacoco'
@@ -22,7 +22,7 @@ apply plugin: 'com.palantir.baseline-config'
 
 apply plugin: 'com.palantir.baseline-checkstyle'
 apply plugin: 'com.palantir.baseline-eclipse'
-apply plugin: 'com.palantir.baseline-findbugs'
+apply plugin: 'com.palantir.baseline-error-prone'
 apply plugin: 'com.palantir.baseline-idea'
 
 sourceCompatibility = 1.7
@@ -32,6 +32,7 @@ version gitVersion()
 
 repositories {
     jcenter()
+    maven { url 'https://palantir.bintray.com/releases/' }
 }
 
 dependencies {
@@ -39,11 +40,10 @@ dependencies {
 
     testCompile "junit:junit:$junitVersion"
     testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+
+    baseline "com.palantir.baseline:gradle-baseline-java-config:0.14.0@zip"
 }
 
-findbugs {
-    omitVisitors = ["FinalSignatureDetector"]
-}
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
@@ -71,8 +71,6 @@ publishing {
 }
 
 tasks.check.dependsOn(javadoc)
-
-jacocoTestReport.reports.xml.enabled true
 
 bintray {
     user = System.getenv('BINTRAY_USER')

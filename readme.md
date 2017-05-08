@@ -1,7 +1,6 @@
 Resource Identifier 
 ===================
 [![Build Status](https://circleci.com/gh/palantir/resource-identifier.svg?style=shield)](https://circleci.com/gh/palantir/resource-identifier)
-[![Coverage Status](https://coveralls.io/repos/palantir/resource-identifier/badge.svg?branch=develop&service=github&t=KtNNqP)](https://coveralls.io/github/palantir/resource-identifier?branch=develop)
 [![JCenter Release](https://img.shields.io/github/release/palantir/resource-identifier.svg)](
 http://jcenter.bintray.com/com/palantir/ri/)
 
