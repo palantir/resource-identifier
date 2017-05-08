@@ -1,10 +1,11 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://palantir.bintray.com/releases/' }
     }
 
     dependencies {
-        classpath 'com.palantir:gradle-baseline-java:0.9.1'
+        classpath 'com.palantir.baseline:gradle-baseline-java:0.14.0'
     }
 }
 
@@ -21,7 +22,7 @@ apply plugin: 'com.palantir.baseline-config'
 
 apply plugin: 'com.palantir.baseline-checkstyle'
 apply plugin: 'com.palantir.baseline-eclipse'
-apply plugin: 'com.palantir.baseline-findbugs'
+apply plugin: 'com.palantir.baseline-error-prone'
 apply plugin: 'com.palantir.baseline-idea'
 
 sourceCompatibility = 1.7
@@ -31,6 +32,7 @@ version gitVersion()
 
 repositories {
     jcenter()
+    maven { url 'https://palantir.bintray.com/releases/' }
 }
 
 dependencies {
@@ -38,11 +40,10 @@ dependencies {
 
     testCompile "junit:junit:$junitVersion"
     testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+
+    baseline "com.palantir.baseline:gradle-baseline-java-config:0.14.0@zip"
 }
 
-findbugs {
-    omitVisitors = ["FinalSignatureDetector"]
-}
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
