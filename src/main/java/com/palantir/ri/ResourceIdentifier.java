@@ -18,6 +18,7 @@ package com.palantir.ri;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +43,10 @@ import java.util.regex.Pattern;
  *      {@code [a-zA-Z0-9\-\._]+}
  * </ol>
  */
-public final class ResourceIdentifier {
+public final class ResourceIdentifier implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private static final String RID_CLASS = "ri";
     private static final String SEPARATOR = ".";
     private static final String SERVICE_REGEX = "([a-z][a-z0-9\\-]*)";
