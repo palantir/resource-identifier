@@ -66,15 +66,15 @@ public final class ResourceIdentifier {
     private final int locatorIndex;
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
-        String safeInstnace = instance == null ? "" : instance;
+        String safeInstance = instance == null ? "" : instance;
         resourceIdentifier = RID_CLASS + SEPARATOR
                 + service + SEPARATOR
-                + safeInstnace + SEPARATOR
+                + safeInstance + SEPARATOR
                 + type + SEPARATOR
                 + locator;
 
         serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
-        instanceIndex = serviceIndex + SEPARATOR.length() + safeInstnace.length();
+        instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
         typeIndex = instanceIndex + SEPARATOR.length() + type.length();
         locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
 
@@ -158,10 +158,7 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
-        return Objects.equals(getService(), other.getService())
-                && Objects.equals(getInstance(), other.getInstance())
-                && Objects.equals(getType(), other.getType())
-                && Objects.equals(getLocator(), other.getLocator());
+        return Objects.equals(resourceIdentifier, other.resourceIdentifier);
     }
 
     /**
