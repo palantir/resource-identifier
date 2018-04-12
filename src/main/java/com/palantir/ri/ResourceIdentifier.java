@@ -63,12 +63,14 @@ public final class ResourceIdentifier {
     private final String instance;
     private final String type;
     private final String locator;
+    private final String resourceIdentifier;
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
         this.service = service;
         this.instance = instance == null ? "" : instance;
         this.type = type;
         this.locator = locator;
+        resourceIdentifier = toString();
     }
 
     /**
@@ -134,7 +136,7 @@ public final class ResourceIdentifier {
      */
     @Override
     public int hashCode() {
-        return locator.hashCode();
+        return resourceIdentifier.hashCode();
     }
 
     /**
