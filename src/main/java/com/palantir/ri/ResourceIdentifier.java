@@ -134,7 +134,7 @@ public final class ResourceIdentifier {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(service, instance, type, locator);
+        return locator.hashCode();
     }
 
     /**
