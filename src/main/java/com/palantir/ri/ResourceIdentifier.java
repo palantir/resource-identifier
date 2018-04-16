@@ -18,6 +18,7 @@ package com.palantir.ri;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.nio.CharBuffer;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,16 +60,24 @@ public final class ResourceIdentifier {
             RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\."
             + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
-    private final String service;
-    private final String instance;
-    private final String type;
-    private final String locator;
+    private final String resourceIdentifier;
+    private final int serviceIndex;
+    private final int instanceIndex;
+    private final int typeIndex;
+    private final int locatorIndex;
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
-        this.service = service;
-        this.instance = instance == null ? "" : instance;
-        this.type = type;
-        this.locator = locator;
+        String safeInstance = instance == null ? "" : instance;
+        resourceIdentifier = RID_CLASS + SEPARATOR
+                + service + SEPARATOR
+                + safeInstance + SEPARATOR
+                + type + SEPARATOR
+                + locator;
+
+        serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
+        instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
+        typeIndex = instanceIndex + SEPARATOR.length() + type.length();
+        locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
     }
 
     /**
@@ -77,7 +86,7 @@ public final class ResourceIdentifier {
      * @return the service component from this identifier
      */
     public String getService() {
-        return service;
+        return resourceIdentifier.substring(RID_CLASS.length() + SEPARATOR.length(), serviceIndex);
     }
 
     /**
@@ -86,7 +95,7 @@ public final class ResourceIdentifier {
      * @return the instance component from this identifier
      */
     public String getInstance() {
-        return instance;
+        return resourceIdentifier.substring(serviceIndex + 1, instanceIndex);
     }
 
     /**
@@ -95,7 +104,7 @@ public final class ResourceIdentifier {
      * @return the type component from this identifier
      */
     public String getType() {
-        return type;
+        return resourceIdentifier.substring(instanceIndex + 1, typeIndex);
     }
 
     /**
@@ -104,12 +113,13 @@ public final class ResourceIdentifier {
      * @return the locator component from this identifier
      */
     public String getLocator() {
-        return locator;
+        CharBuffer.wrap(resourceIdentifier);
+        return resourceIdentifier.substring(typeIndex + 1, locatorIndex);
     }
 
     /**
      * Returns a string representation of this ResourceIdentifier. The string representation
-     * follows the format specification using the "ri" header followed by the 5 components
+     * follows the format specification using the "ri" header followed by the 4 components
      * separated by periods.
      *
      * @return a string representation of this identifier
@@ -117,30 +127,25 @@ public final class ResourceIdentifier {
     @Override
     @JsonValue
     public String toString() {
-        StringBuilder builder = new StringBuilder(RID_CLASS).append(SEPARATOR)
-                .append(service).append(SEPARATOR)
-                .append(instance).append(SEPARATOR)
-                .append(type).append(SEPARATOR)
-                .append(locator);
-        return builder.toString();
+        return resourceIdentifier;
     }
 
     /**
      * Returns the hash code value for identifier.  The hash code
      * is calculated using the Java {@link Objects#hash(Object...)} method
-     * over each of the 5 components.
+     * over each of the 4 components.
      *
      * @return the hash code value for this identifier
      */
     @Override
     public int hashCode() {
-        return Objects.hash(service, instance, type, locator);
+        return resourceIdentifier.hashCode();
     }
 
     /**
      * Compares the specified object with this identifier for equality.  Returns
      * {@code true} if and only if the specified object is also a resource identifier and
-     * contain exactly the same values for all 5 components.
+     * contain exactly the same values for all 4 components.
      *
      * @param obj the object to be compared for equality with this identifier
      * @return {@code true} if the specified object is equal to this identifier, {@code false} otherwise
@@ -154,10 +159,7 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
-        return Objects.equals(service, other.service)
-                && Objects.equals(instance, other.instance)
-                && Objects.equals(type, other.type)
-                && Objects.equals(locator, other.locator);
+        return resourceIdentifier.equals(other.resourceIdentifier);
     }
 
     /**
@@ -248,7 +250,7 @@ public final class ResourceIdentifier {
 
 
     /**
-     * Generates a new resource identifier object from each of the 5 input components. Each component must
+     * Generates a new resource identifier object from each of the 4 input components. Each component must
      * satisfy the requirements as defined by the specification.
      *
      * @param service input representing the service component
