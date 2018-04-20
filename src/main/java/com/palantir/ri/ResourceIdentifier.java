@@ -113,7 +113,6 @@ public final class ResourceIdentifier {
      * @return the locator component from this identifier
      */
     public String getLocator() {
-        CharBuffer.wrap(resourceIdentifier);
         return resourceIdentifier.substring(typeIndex + 1, locatorIndex);
     }
 
