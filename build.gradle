@@ -5,6 +5,7 @@ buildscript {
     }
 
     dependencies {
+        classpath 'gradle.plugin.com.palantir:gradle-circle-style:1.1.2'
         classpath 'com.palantir.baseline:gradle-baseline-java:0.14.0'
     }
 }
@@ -24,6 +25,7 @@ apply plugin: 'com.palantir.baseline-checkstyle'
 apply plugin: 'com.palantir.baseline-eclipse'
 apply plugin: 'com.palantir.baseline-error-prone'
 apply plugin: 'com.palantir.baseline-idea'
+apply plugin: 'com.palantir.circle.style'
 
 sourceCompatibility = 1.7
 
