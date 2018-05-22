@@ -18,7 +18,6 @@ package com.palantir.ri;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.nio.CharBuffer;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +112,6 @@ public final class ResourceIdentifier {
      * @return the locator component from this identifier
      */
     public String getLocator() {
-        CharBuffer.wrap(resourceIdentifier);
         return resourceIdentifier.substring(typeIndex + 1, locatorIndex);
     }
 
