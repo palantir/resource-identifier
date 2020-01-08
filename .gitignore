@@ -1,25 +1,28 @@
+# Gradle
 *.class
-.project
+*.jar
 .gradle
+build/
+
+# Eclipse
 .classpath
 .checkstyle
+.factorypath
+.project
 .settings
-build/
 bin/
+generated/
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Idea
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+generated_src/
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# Codegen
+.generated
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# Windows git artifact
-fileeditor
-
-# Mac specific files
+# Mac
 .DS_Store

@@ -1,89 +1,39 @@
 buildscript {
     repositories {
-        jcenter()
+        gradlePluginPortal()
         maven { url 'https://palantir.bintray.com/releases/' }
     }
 
     dependencies {
-        classpath 'com.palantir.baseline:gradle-baseline-java:0.14.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.netflix.nebula:gradle-dependency-lock-plugin:7.0.1'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:14.1.1'
+        classpath 'com.palantir.baseline:gradle-baseline-java:2.41.0'
+        classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:1.14.0'
+        classpath 'com.palantir.gradle.gitversion:gradle-git-version:0.12.2'
     }
 }
 
-plugins {
-    id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.palantir.git-version' version '0.5.2'
-
-    id 'jacoco'
-    id 'java'
-    id 'maven-publish'
-}
-
-apply plugin: 'com.palantir.baseline-config'
-
-apply plugin: 'com.palantir.baseline-checkstyle'
-apply plugin: 'com.palantir.baseline-eclipse'
-apply plugin: 'com.palantir.baseline-error-prone'
-apply plugin: 'com.palantir.baseline-idea'
-
-sourceCompatibility = 1.7
+apply plugin: 'java-library'
+apply plugin: 'com.palantir.baseline'
+apply plugin: 'com.palantir.git-version'
+apply plugin: 'com.palantir.consistent-versions'
 
 group 'com.palantir.ri'
 version gitVersion()
+
+apply from: "${rootDir}/gradle/publish-jar.gradle"
 
 repositories {
     jcenter()
     maven { url 'https://palantir.bintray.com/releases/' }
 }
 
+sourceCompatibility = 1.7
+
 dependencies {
-    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    compile 'com.fasterxml.jackson.core:jackson-annotations'
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-
-    baseline "com.palantir.baseline:gradle-baseline-java-config:0.14.0@zip"
+    testCompile 'junit:junit'
+    testCompile 'com.fasterxml.jackson.core:jackson-databind'
 }
-
-
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier 'sources'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-    destinationDir rootProject.file("${buildDir}/libs")
-}
-
-publishing {
-    publications {
-        bintray(MavenPublication) {
-            from components.java
-            artifact(sourceJar) {
-                classifier 'sources'
-            }
-            artifact(javadocJar) {
-                classifier 'javadoc'
-            }
-        }
-    }
-}
-
-tasks.check.dependsOn(javadoc)
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    pkg {
-        repo = 'releases'
-        name = 'resource-identifier'
-        userOrg = 'palantir'
-        licenses = ['Apache-2.0']
-        publications = ['bintray']
-    }
-}
-
-tasks.bintrayUpload.dependsOn { generatePomFileForBintrayPublication }
-tasks.bintrayUpload.dependsOn { sourceJar }
-tasks.bintrayUpload.dependsOn { build }
