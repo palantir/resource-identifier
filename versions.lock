@@ -1,8 +1,8 @@
 # Run ./gradlew --write-locks to regenerate this file
-com.fasterxml.jackson.core:jackson-annotations:2.10.3 (2 constraints: bd17d370)
+com.fasterxml.jackson.core:jackson-annotations:2.11.0 (2 constraints: b9176970)
 
 [Test dependencies]
-com.fasterxml.jackson.core:jackson-core:2.10.3 (1 constraints: 86122f21)
-com.fasterxml.jackson.core:jackson-databind:2.10.3 (1 constraints: 3805323b)
+com.fasterxml.jackson.core:jackson-core:2.11.0 (1 constraints: 84122f21)
+com.fasterxml.jackson.core:jackson-databind:2.11.0 (1 constraints: 3605323b)
 junit:junit:4.13 (1 constraints: dc040031)
 org.hamcrest:hamcrest-core:1.3 (1 constraints: cc05fe3f)
