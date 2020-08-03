@@ -1,2 +1,2 @@
-com.fasterxml.jackson.core:* = 2.11.1
+com.fasterxml.jackson.core:* = 2.11.2
 junit:junit = 4.13
