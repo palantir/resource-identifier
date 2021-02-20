@@ -4,5 +4,5 @@ com.fasterxml.jackson.core:jackson-annotations:2.11.3 (2 constraints: bf170e71)
 [Test dependencies]
 com.fasterxml.jackson.core:jackson-core:2.11.3 (1 constraints: 87123221)
 com.fasterxml.jackson.core:jackson-databind:2.11.3 (1 constraints: 3905353b)
-junit:junit:4.13.1 (1 constraints: 3b05453b)
+junit:junit:4.13.2 (1 constraints: 3c05463b)
 org.hamcrest:hamcrest-core:1.3 (1 constraints: cc05fe3f)
