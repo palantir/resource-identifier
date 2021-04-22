@@ -29,7 +29,7 @@ repositories {
     maven { url 'https://palantir.bintray.com/releases/' }
 }
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
