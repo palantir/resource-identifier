@@ -1,7 +1,8 @@
 buildscript {
     repositories {
         gradlePluginPortal()
-        maven { url 'https://palantir.bintray.com/releases/' }
+        mavenCentral()
+        jcenter()
     }
 
     dependencies {
@@ -25,8 +26,8 @@ version gitVersion()
 apply from: "${rootDir}/gradle/publish-jar.gradle"
 
 repositories {
+    mavenCentral()
     jcenter()
-    maven { url 'https://palantir.bintray.com/releases/' }
 }
 
 sourceCompatibility = 1.8
