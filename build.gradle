@@ -6,15 +6,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.palantir.gradle.externalpublish:gradle-external-publish-plugin:0.4.10'
         classpath 'com.netflix.nebula:gradle-dependency-lock-plugin:7.0.1'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:14.1.1'
         classpath 'com.palantir.baseline:gradle-baseline-java:3.79.0'
         classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:1.14.0'
         classpath 'com.palantir.gradle.gitversion:gradle-git-version:0.12.2'
     }
 }
 
+apply plugin: 'com.palantir.external-publish'
 apply plugin: 'java-library'
 apply plugin: 'com.palantir.baseline'
 apply plugin: 'com.palantir.git-version'
@@ -23,7 +23,7 @@ apply plugin: 'com.palantir.consistent-versions'
 group 'com.palantir.ri'
 version gitVersion()
 
-apply from: "${rootDir}/gradle/publish-jar.gradle"
+apply plugin: 'com.palantir.external-publish-jar'
 
 repositories {
     mavenCentral()
