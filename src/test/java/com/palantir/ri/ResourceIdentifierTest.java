@@ -196,22 +196,28 @@ public final class ResourceIdentifierTest {
 
     @Test
     public void testStringConstruction() {
-        assertEquals("ri.service..type.name",
+        assertEquals(
+                "ri.service..type.name",
                 ResourceIdentifier.of("service", "", "type", "name").toString());
-        assertEquals("ri.service.instance.type.name",
+        assertEquals(
+                "ri.service.instance.type.name",
                 ResourceIdentifier.of("service", "instance", "type", "name").toString());
     }
 
     @Test
     public void testStringConstructionWithMultipleLocatorComponents() {
-        assertEquals("ri.service..type.name1",
-                ResourceIdentifier.of("service", "", "type", "name1", new String[0]).toString());
-        assertEquals("ri.service..type.name1.name2",
-                ResourceIdentifier.of("service", "", "type", "name1",
-                        new String[] {"name2"}).toString());
-        assertEquals("ri.service..type.name1.name2.name3",
-                ResourceIdentifier.of("service", "", "type", "name1",
-                        new String[] {"name2", "name3"}).toString());
+        assertEquals(
+                "ri.service..type.name1",
+                ResourceIdentifier.of("service", "", "type", "name1", new String[0])
+                        .toString());
+        assertEquals(
+                "ri.service..type.name1.name2",
+                ResourceIdentifier.of("service", "", "type", "name1", new String[] {"name2"})
+                        .toString());
+        assertEquals(
+                "ri.service..type.name1.name2.name3",
+                ResourceIdentifier.of("service", "", "type", "name1", new String[] {"name2", "name3"})
+                        .toString());
     }
 
     @Test
