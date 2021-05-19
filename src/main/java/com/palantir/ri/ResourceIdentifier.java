@@ -56,8 +56,7 @@ public final class ResourceIdentifier {
     private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
     // creates a Pattern in form of ri.<service>.<instance>.<type>.<locator>
     private static final Pattern SPEC_PATTERN = Pattern.compile(
-            RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\."
-            + TYPE_REGEX + "\\." + LOCATOR_REGEX);
+            RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
     private final String resourceIdentifier;
     private final int serviceIndex;
@@ -67,11 +66,8 @@ public final class ResourceIdentifier {
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
         String safeInstance = instance == null ? "" : instance;
-        resourceIdentifier = RID_CLASS + SEPARATOR
-                + service + SEPARATOR
-                + safeInstance + SEPARATOR
-                + type + SEPARATOR
-                + locator;
+        resourceIdentifier =
+                RID_CLASS + SEPARATOR + service + SEPARATOR + safeInstance + SEPARATOR + type + SEPARATOR + locator;
 
         serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
         instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
@@ -239,13 +235,11 @@ public final class ResourceIdentifier {
         if (rid != null) {
             Matcher matcher = SPEC_PATTERN.matcher(rid);
             if (matcher.matches()) {
-                return new ResourceIdentifier(matcher.group(1), matcher.group(2), matcher.group(3),
-                    matcher.group(4));
+                return new ResourceIdentifier(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
             }
         }
         throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
     }
-
 
     /**
      * Generates a new resource identifier object from each of the 4 input components. Each component must
@@ -280,8 +274,8 @@ public final class ResourceIdentifier {
      *
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
-    public static ResourceIdentifier of(String service, String instance, String type,
-            String firstLocatorComponent, String... locatorComponents) {
+    public static ResourceIdentifier of(
+            String service, String instance, String type, String firstLocatorComponent, String... locatorComponents) {
         StringBuilder builder = new StringBuilder(firstLocatorComponent);
         for (String component : locatorComponents) {
             builder.append(SEPARATOR).append(component);
@@ -312,5 +306,4 @@ public final class ResourceIdentifier {
             throw new IllegalArgumentException("Illegal locator format: " + value);
         }
     }
-
 }
