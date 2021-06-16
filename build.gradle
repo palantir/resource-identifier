@@ -47,7 +47,7 @@ dependencies {
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 
     annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
-    compileOnly 'org.openjdk.jmh:jmh-generator-annprocess'
+    compileOnly 'org.openjdk.jmh:jmh-core'
     jmh 'org.openjdk.jmh:jmh-core'
 }
 
