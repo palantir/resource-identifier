@@ -265,12 +265,11 @@ public final class ResourceIdentifier {
         checkTypeIsValid(type);
         checkLocatorIsValid(locator);
 
-        String safeInstance = instance == null ? "" : instance;
         String resourceIdentifier =
-                RID_CLASS + SEPARATOR + service + SEPARATOR + safeInstance + SEPARATOR + type + SEPARATOR + locator;
+                RID_CLASS + SEPARATOR + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
 
         int serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
-        int instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
+        int instanceIndex = serviceIndex + SEPARATOR.length() + instance.length();
         int typeIndex = instanceIndex + SEPARATOR.length() + type.length();
         int locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
         return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex, locatorIndex);
