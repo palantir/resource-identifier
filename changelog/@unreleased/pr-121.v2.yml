@@ -1,0 +1,6 @@
+type: improvement
+improvement:
+  description: Deserializing a ResourceIdentifier now causes zero heap-allocated strings
+    (previously it allocated 5).
+  links:
+  - https://github.com/palantir/resource-identifier/pull/121

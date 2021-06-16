@@ -20,6 +20,8 @@ generated/
 .idea/
 out/
 generated_src/
+generated_testSrc/
+generated/
 
 # Codegen
 .generated
