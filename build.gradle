@@ -49,7 +49,6 @@ dependencies {
     annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
     compileOnly 'org.openjdk.jmh:jmh-generator-annprocess'
     jmh 'org.openjdk.jmh:jmh-core'
-    // jmh 'org.apache.logging.log4j:log4j-slf4j-impl'
 }
 
 jmh {
