@@ -46,7 +46,7 @@ public final class ResourceIdentifier {
     private static final String RID_CLASS = "ri";
     private static final String SEPARATOR = ".";
     private static final String SERVICE_REGEX = "([a-z][a-z0-9\\-]*)";
-    private static final String INSTANCE_REGEX = "([a-z0-9][a-z0-9\\-]*)?";
+    private static final String INSTANCE_REGEX = "((?:[a-z0-9][a-z0-9\\-]*)?)";
     private static final String TYPE_REGEX = "([a-z][a-z0-9\\-]*)";
     private static final String LOCATOR_REGEX = "([a-zA-Z0-9_\\-\\.]+)";
 
@@ -65,12 +65,11 @@ public final class ResourceIdentifier {
     private final int locatorIndex;
 
     private ResourceIdentifier(String service, String instance, String type, String locator) {
-        String safeInstance = instance == null ? "" : instance;
         resourceIdentifier =
-                RID_CLASS + SEPARATOR + service + SEPARATOR + safeInstance + SEPARATOR + type + SEPARATOR + locator;
+                RID_CLASS + SEPARATOR + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
 
         serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
-        instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
+        instanceIndex = serviceIndex + SEPARATOR.length() + instance.length();
         typeIndex = instanceIndex + SEPARATOR.length() + type.length();
         locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
     }
