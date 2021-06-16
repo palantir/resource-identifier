@@ -64,15 +64,13 @@ public final class ResourceIdentifier {
     private final int typeIndex;
     private final int locatorIndex;
 
-    private ResourceIdentifier(String service, String instance, String type, String locator) {
-        String safeInstance = instance == null ? "" : instance;
-        resourceIdentifier =
-                RID_CLASS + SEPARATOR + service + SEPARATOR + safeInstance + SEPARATOR + type + SEPARATOR + locator;
-
-        serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
-        instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
-        typeIndex = instanceIndex + SEPARATOR.length() + type.length();
-        locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
+    private ResourceIdentifier(
+            String validatedString, int serviceIndex, int instanceIndex, int typeIndex, int locatorIndex) {
+        this.resourceIdentifier = validatedString;
+        this.serviceIndex = serviceIndex;
+        this.instanceIndex = instanceIndex;
+        this.typeIndex = typeIndex;
+        this.locatorIndex = locatorIndex;
     }
 
     /**
@@ -235,7 +233,15 @@ public final class ResourceIdentifier {
         if (rid != null) {
             Matcher matcher = SPEC_PATTERN.matcher(rid);
             if (matcher.matches()) {
-                return new ResourceIdentifier(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+                int serviceIndex = matcher.end(1);
+                int instanceIndex = matcher.end(2);
+                int typeIndex = matcher.end(3);
+                int locatorIndex = matcher.end(4);
+                if (instanceIndex == -1) {
+                    // the 'instance' regex is the only one that has a '?' and tolerates an empty string
+                    instanceIndex = serviceIndex + 1;
+                }
+                return new ResourceIdentifier(rid, serviceIndex, instanceIndex, typeIndex, locatorIndex);
             }
         }
         throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
@@ -258,7 +264,16 @@ public final class ResourceIdentifier {
         checkInstanceIsValid(instance);
         checkTypeIsValid(type);
         checkLocatorIsValid(locator);
-        return new ResourceIdentifier(service, instance, type, locator);
+
+        String safeInstance = instance == null ? "" : instance;
+        String resourceIdentifier =
+                RID_CLASS + SEPARATOR + service + SEPARATOR + safeInstance + SEPARATOR + type + SEPARATOR + locator;
+
+        int serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
+        int instanceIndex = serviceIndex + SEPARATOR.length() + safeInstance.length();
+        int typeIndex = instanceIndex + SEPARATOR.length() + type.length();
+        int locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
+        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex, locatorIndex);
     }
 
     /**
