@@ -71,7 +71,7 @@ public class ResourceIdentifierBenchmark {
                 .threads(4)
                 .warmupIterations(3)
                 .warmupTime(TimeValue.seconds(3))
-                .measurementIterations(3)
+                .measurementIterations(4)
                 .measurementTime(TimeValue.seconds(3))
                 .build();
         new Runner(opt).run();
