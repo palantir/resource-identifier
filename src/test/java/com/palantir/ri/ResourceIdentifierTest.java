@@ -26,14 +26,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public final class ResourceIdentifierTest {
     private static List<String> goodIds;
     private static List<String> badIds;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         goodIds = new ArrayList<>();
         goodIds.add("ri.service.instance.folder.foo");

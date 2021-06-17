@@ -49,6 +49,10 @@ dependencies {
     annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
     compileOnly 'org.openjdk.jmh:jmh-core'
     jmh 'org.openjdk.jmh:jmh-core'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine', {
+        because 'allows JUnit 3 and JUnit 4 tests to run'
+    }
 }
 
 jmh {
