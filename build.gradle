@@ -43,16 +43,16 @@ sourceCompatibility = 1.8
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
 
-    testImplementation 'junit:junit'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
-
-    annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
-    compileOnly 'org.openjdk.jmh:jmh-core'
-    jmh 'org.openjdk.jmh:jmh-core'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine', {
-        because 'allows JUnit 3 and JUnit 4 tests to run'
-    }
+
+    jmh 'org.openjdk.jmh:jmh-core'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess'
+
+}
+
+configurations.testCompileClasspath {
+    exclude module: 'junit'
 }
 
 jmh {
