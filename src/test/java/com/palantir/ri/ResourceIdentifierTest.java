@@ -16,25 +16,25 @@
 
 package com.palantir.ri;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public final class ResourceIdentifierTest {
+final class ResourceIdentifierTest {
     private static List<String> goodIds;
     private static List<String> badIds;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeAll() {
         goodIds = new ArrayList<>();
         goodIds.add("ri.service.instance.folder.foo");
         goodIds.add("ri.service-123.north-east.folder.foo.bar");
@@ -58,46 +58,46 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
-    public void testIsValidGood() {
+    void testIsValidGood() {
         for (String rid : goodIds) {
             assertTrue(ResourceIdentifier.isValid(rid));
         }
     }
 
     @Test
-    public void testIsValidBad() {
+    void testIsValidBad() {
         for (String rid : badIds) {
-            assertFalse("bad rid " + rid, ResourceIdentifier.isValid(rid));
+            assertFalse(ResourceIdentifier.isValid(rid));
         }
         assertFalse(ResourceIdentifier.isValid(null));
     }
 
     @Test
-    public void testIsValidService() {
+    void testIsValidService() {
         assertTrue(ResourceIdentifier.isValidService("valid-service-123"));
         assertFalse(ResourceIdentifier.isValidService("invalid.service!"));
     }
 
     @Test
-    public void testIsValidInstance() {
+    void testIsValidInstance() {
         assertTrue(ResourceIdentifier.isValidInstance("valid-instance-123"));
         assertFalse(ResourceIdentifier.isValidInstance("invalid.instance!"));
     }
 
     @Test
-    public void testIsValidType() {
+    void testIsValidType() {
         assertTrue(ResourceIdentifier.isValidType("valid-type-123"));
         assertFalse(ResourceIdentifier.isValidType("invalid.type!"));
     }
 
     @Test
-    public void testIsValidLocator() {
+    void testIsValidLocator() {
         assertTrue(ResourceIdentifier.isValidLocator("valid-Locator_123."));
         assertFalse(ResourceIdentifier.isValidLocator("invalid.locator!"));
     }
 
     @Test
-    public void testConstructionErrorMessage() {
+    void testConstructionErrorMessage() {
         try {
             ResourceIdentifier.of("ri.bad....dots");
             fail();
@@ -143,7 +143,7 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
-    public void testReconstruction() {
+    void testReconstruction() {
         for (String rid : goodIds) {
             ResourceIdentifier resourceId = ResourceIdentifier.of(rid);
             String service = resourceId.getService();
@@ -155,14 +155,14 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         ResourceIdentifier of = ResourceIdentifier.of("ri.service.instance.type.name");
         ResourceIdentifier valueOf = ResourceIdentifier.valueOf("ri.service.instance.type.name");
         assertEquals(of, valueOf);
     }
 
     @Test
-    public void testSerialization() throws IOException {
+    void testSerialization() throws IOException {
         ObjectMapper om = new ObjectMapper();
         String ridString = "ri.service.instance.type.name";
         String ridString1 = "ri.service..type-123.aBC-name_123";
@@ -195,7 +195,7 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
-    public void testStringConstruction() {
+    void testStringConstruction() {
         assertEquals(
                 "ri.service..type.name",
                 ResourceIdentifier.of("service", "", "type", "name").toString());
@@ -205,23 +205,21 @@ public final class ResourceIdentifierTest {
     }
 
     @Test
-    public void testStringConstructionWithMultipleLocatorComponents() {
+    void testStringConstructionWithMultipleLocatorComponents() {
         assertEquals(
                 "ri.service..type.name1",
-                ResourceIdentifier.of("service", "", "type", "name1", new String[0])
-                        .toString());
+                ResourceIdentifier.of("service", "", "type", "name1").toString());
         assertEquals(
                 "ri.service..type.name1.name2",
-                ResourceIdentifier.of("service", "", "type", "name1", new String[] {"name2"})
-                        .toString());
+                ResourceIdentifier.of("service", "", "type", "name1", "name2").toString());
         assertEquals(
                 "ri.service..type.name1.name2.name3",
-                ResourceIdentifier.of("service", "", "type", "name1", new String[] {"name2", "name3"})
+                ResourceIdentifier.of("service", "", "type", "name1", "name2", "name3")
                         .toString());
     }
 
     @Test
-    public void testEqualsHashCode() {
+    void testEqualsHashCode() {
         ResourceIdentifier prevRid = null;
         for (int i = 0; i < goodIds.size(); ++i) {
             ResourceIdentifier curRid = ResourceIdentifier.of(goodIds.get(i));
