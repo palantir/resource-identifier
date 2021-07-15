@@ -2,7 +2,6 @@ buildscript {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        jcenter()
     }
 
     dependencies {
@@ -35,7 +34,6 @@ apply plugin: 'com.palantir.external-publish-jar'
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 sourceCompatibility = 1.8
