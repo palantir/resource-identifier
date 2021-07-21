@@ -265,14 +265,7 @@ public final class ResourceIdentifier {
         checkTypeIsValid(type);
         checkLocatorIsValid(locator);
 
-        String resourceIdentifier =
-                RID_CLASS + SEPARATOR + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
-
-        int serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
-        int instanceIndex = serviceIndex + SEPARATOR.length() + instance.length();
-        int typeIndex = instanceIndex + SEPARATOR.length() + type.length();
-        int locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
-        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex, locatorIndex);
+        return safeCreate(service, instance, type, locator);
     }
 
     /**
@@ -295,6 +288,60 @@ public final class ResourceIdentifier {
             builder.append(SEPARATOR).append(component);
         }
         return of(service, instance, type, builder.toString());
+    }
+
+    public static Factory factory() {
+        return new Factory();
+    }
+
+    public static final class Factory {
+        private String service;
+        private String instance;
+        private String type;
+
+        public Factory service(String value) {
+            checkServiceIsValid(value);
+            this.service = value;
+            return this;
+        }
+
+        public Factory instance(String value) {
+            checkInstanceIsValid(value);
+            this.instance = value;
+            return this;
+        }
+
+        public Factory type(String value) {
+            checkTypeIsValid(value);
+            this.type = value;
+            return this;
+        }
+
+        public ResourceIdentifier create(String locator) {
+            checkLocatorIsValid(locator);
+            if (service == null) {
+                throw new NullPointerException("Missing service");
+            }
+            if (instance == null) {
+                throw new NullPointerException("Missing instance");
+            }
+            if (type == null) {
+                throw new NullPointerException("Missing type");
+            }
+
+            return safeCreate(service, instance, type, locator);
+        }
+    }
+
+    private static ResourceIdentifier safeCreate(String service, String instance, String type, String locator) {
+        String resourceIdentifier =
+                RID_CLASS + SEPARATOR + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
+
+        int serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
+        int instanceIndex = serviceIndex + SEPARATOR.length() + instance.length();
+        int typeIndex = instanceIndex + SEPARATOR.length() + type.length();
+        int locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
+        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex, locatorIndex);
     }
 
     private static void checkServiceIsValid(String service) {
