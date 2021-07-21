@@ -19,6 +19,7 @@ package com.palantir.ri;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.palantir.ri.ResourceIdentifier.Factory;
 import org.junit.jupiter.api.Test;
 
 public class ResourceIdentifierFactoryTest {
@@ -50,13 +51,10 @@ public class ResourceIdentifierFactoryTest {
     }
 
     @Test
-    void testValidRid() {
-        assertEquals(
-                ResourceIdentifier.factory()
-                        .service("s")
-                        .instance("i")
-                        .type("t")
-                        .create("l"),
-                ResourceIdentifier.of("ri.s.i.t.l"));
+    void testValidRids() {
+        Factory factory =
+                ResourceIdentifier.factory().service("s").instance("i").type("t");
+        assertEquals(factory.create("l1"), ResourceIdentifier.of("ri.s.i.t.l1"));
+        assertEquals(factory.create("l2"), ResourceIdentifier.of("ri.s.i.t.l2"));
     }
 }
