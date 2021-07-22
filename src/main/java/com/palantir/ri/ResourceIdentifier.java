@@ -364,11 +364,12 @@ public final class ResourceIdentifier {
             return INDEX_INVALID;
         }
 
-        if (start >= value.length()) {
+        int length = value.length();
+        if (start >= length) {
             return INDEX_INVALID;
         }
 
-        for (int i = start; i < value.length(); i++) {
+        for (int i = start; i < length; i++) {
             char ch = value.charAt(i);
             if (i == start) {
                 if (!isLowerAlpha(ch)) {
@@ -390,11 +391,12 @@ public final class ResourceIdentifier {
             return INDEX_INVALID;
         }
 
-        if (start > value.length()) {
+        int length = value.length();
+        if (start > length) {
             return INDEX_INVALID;
         }
 
-        for (int i = start; i < value.length(); i++) {
+        for (int i = start; i < length; i++) {
             char ch = value.charAt(i);
             if (ch == SEPARATOR) {
                 return i;
@@ -420,11 +422,12 @@ public final class ResourceIdentifier {
             return INDEX_INVALID;
         }
 
-        if (start >= value.length()) {
+        int length = value.length();
+        if (start >= length) {
             return INDEX_INVALID;
         }
 
-        for (int i = start; i < value.length(); i++) {
+        for (int i = start; i < length; i++) {
             char ch = value.charAt(i);
             if (!(isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDot(ch) || isDash(ch) || isUnderscore(ch))) {
                 return INDEX_INVALID;
