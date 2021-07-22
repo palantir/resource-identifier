@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 final class ResourceIdentifierTest {
+
     private static List<String> goodIds;
     private static List<String> badIds;
 
@@ -60,14 +61,14 @@ final class ResourceIdentifierTest {
     @Test
     void testIsValidGood() {
         for (String rid : goodIds) {
-            assertTrue(ResourceIdentifier.isValid(rid));
+            assertTrue(ResourceIdentifier.isValid(rid), rid);
         }
     }
 
     @Test
     void testIsValidBad() {
         for (String rid : badIds) {
-            assertFalse(ResourceIdentifier.isValid(rid));
+            assertFalse(ResourceIdentifier.isValid(rid), rid);
         }
         assertFalse(ResourceIdentifier.isValid(null));
     }
@@ -76,24 +77,28 @@ final class ResourceIdentifierTest {
     void testIsValidService() {
         assertTrue(ResourceIdentifier.isValidService("valid-service-123"));
         assertFalse(ResourceIdentifier.isValidService("invalid.service!"));
+        assertFalse(ResourceIdentifier.isValidService(null));
     }
 
     @Test
     void testIsValidInstance() {
         assertTrue(ResourceIdentifier.isValidInstance("valid-instance-123"));
         assertFalse(ResourceIdentifier.isValidInstance("invalid.instance!"));
+        assertFalse(ResourceIdentifier.isValidInstance(null));
     }
 
     @Test
     void testIsValidType() {
         assertTrue(ResourceIdentifier.isValidType("valid-type-123"));
         assertFalse(ResourceIdentifier.isValidType("invalid.type!"));
+        assertFalse(ResourceIdentifier.isValidType(null));
     }
 
     @Test
     void testIsValidLocator() {
         assertTrue(ResourceIdentifier.isValidLocator("valid-Locator_123."));
         assertFalse(ResourceIdentifier.isValidLocator("invalid.locator!"));
+        assertFalse(ResourceIdentifier.isValidLocator(null));
     }
 
     @Test
@@ -156,7 +161,7 @@ final class ResourceIdentifierTest {
             String instance = resourceId.getInstance();
             String type = resourceId.getType();
             String oid = resourceId.getLocator();
-            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, oid));
+            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, oid), rid);
         }
     }
 

@@ -359,52 +359,47 @@ public final class ResourceIdentifier {
             return Index.INVALID;
         }
 
-        int index = start;
-        while (index < value.length()) {
-            char ch = value.charAt(index);
-            if (index == start) {
+        if (start + 1 > value.length()) {
+            return Index.INVALID;
+        }
+
+        for (int i = start; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (i == start) {
                 if (!isLowerAlpha(ch)) {
                     return Index.INVALID;
                 }
-            } else {
-                if (ch == SEPARATOR) {
-                    return index;
-                }
-                if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
-                    return Index.INVALID;
-                }
+            } else if (ch == SEPARATOR) {
+                return i;
+            } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
+                return Index.INVALID;
             }
-            index++;
-        }
-
-        if (index == start) {
-            return Index.INVALID;
         }
 
         return Index.END;
     }
 
+    @SuppressWarnings("CyclomaticComplexity")
     private static int getInstanceIndex(String value, int start) {
         if (value == null) {
             return Index.INVALID;
         }
 
-        int index = start;
-        while (index < value.length()) {
-            char ch = value.charAt(index);
+        if (start > value.length()) {
+            return Index.INVALID;
+        }
+
+        for (int i = start; i < value.length(); i++) {
+            char ch = value.charAt(i);
             if (ch == SEPARATOR) {
-                return index;
-            }
-            if (index == start) {
+                return i;
+            } else if (i == start) {
                 if (!(isLowerAlpha(ch) || isDigit(ch))) {
                     return Index.INVALID;
                 }
-            } else {
-                if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
-                    return Index.INVALID;
-                }
+            } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
+                return Index.INVALID;
             }
-            index++;
         }
 
         return Index.END;
@@ -420,17 +415,15 @@ public final class ResourceIdentifier {
             return Index.INVALID;
         }
 
-        int index = start;
-        while (index < value.length()) {
-            char ch = value.charAt(index);
+        if (start + 1 > value.length()) {
+            return Index.INVALID;
+        }
+
+        for (int i = start; i < value.length(); i++) {
+            char ch = value.charAt(i);
             if (!(isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDot(ch) || isDash(ch) || isUnderscore(ch))) {
                 return Index.INVALID;
             }
-            index++;
-        }
-
-        if (index == start) {
-            return Index.INVALID;
         }
 
         return Index.END;

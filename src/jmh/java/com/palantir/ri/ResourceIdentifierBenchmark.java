@@ -45,13 +45,21 @@ import org.openjdk.jmh.runner.options.TimeValue;
 public class ResourceIdentifierBenchmark {
 
     public enum Input {
-        NO_INSTANCE("ri.my-service..environment.8c51aa27-32f6-4d25-a3a5-966196e57be3"),
-        UUID("ri.apollo.main.installation.8c51aa27-32f6-4d25-a3a5-966196e57be3");
+        NO_INSTANCE("service", "", "type", "8c51aa27-32f6-4d25-a3a5-966196e57be3"),
+        UUID("service", "instance", "type", "8c51aa27-32f6-4d25-a3a5-966196e57be3");
 
         private final String string;
+        private final String service;
+        private final String instance;
+        private final String type;
+        private final String locator;
 
-        Input(String string) {
-            this.string = string;
+        Input(String service, String instance, String type, String locator) {
+            this.string = "ri." + service + "." + instance + "." + type + "." + locator;
+            this.service = service;
+            this.instance = instance;
+            this.type = type;
+            this.locator = locator;
         }
     }
 
@@ -61,6 +69,11 @@ public class ResourceIdentifierBenchmark {
     @Benchmark
     public ResourceIdentifier fromString() {
         return ResourceIdentifier.of(input.string);
+    }
+
+    @Benchmark
+    public ResourceIdentifier fromComponents() {
+        return ResourceIdentifier.of(input.service, input.instance, input.type, input.locator);
     }
 
     public static void main(String[] _args) throws Exception {
