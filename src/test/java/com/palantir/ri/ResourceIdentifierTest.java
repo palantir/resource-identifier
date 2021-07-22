@@ -99,6 +99,12 @@ final class ResourceIdentifierTest {
     @Test
     void testConstructionErrorMessage() {
         try {
+            ResourceIdentifier.of(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Illegal resource identifier format: null", e.getMessage());
+        }
+        try {
             ResourceIdentifier.of("ri.bad....dots");
             fail();
         } catch (IllegalArgumentException e) {
