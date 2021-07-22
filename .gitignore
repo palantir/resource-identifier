@@ -28,3 +28,6 @@ generated/
 
 # Mac
 .DS_Store
+
+# Jqwik
+.jqwik-database

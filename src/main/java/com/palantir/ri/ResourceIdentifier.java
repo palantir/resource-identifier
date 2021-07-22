@@ -19,8 +19,6 @@ package com.palantir.ri;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Defines a common format for wrapping existing unique identifiers to provide additional context. This class
@@ -43,34 +41,24 @@ import java.util.regex.Pattern;
  * </ol>
  */
 public final class ResourceIdentifier {
-    private static final String RID_CLASS = "ri";
-    private static final String SEPARATOR = ".";
-    private static final String SERVICE_REGEX = "([a-z][a-z0-9\\-]*)";
-    private static final String INSTANCE_REGEX = "([a-z0-9][a-z0-9\\-]*)?";
-    private static final String TYPE_REGEX = "([a-z][a-z0-9\\-]*)";
-    private static final String LOCATOR_REGEX = "([a-zA-Z0-9_\\-\\.]+)";
 
-    private static final Pattern SERVICE_PATTERN = Pattern.compile(SERVICE_REGEX);
-    private static final Pattern INSTANCE_PATTERN = Pattern.compile(INSTANCE_REGEX);
-    private static final Pattern TYPE_PATTERN = Pattern.compile(TYPE_REGEX);
-    private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
-    // creates a Pattern in form of ri.<service>.<instance>.<type>.<locator>
-    private static final Pattern SPEC_PATTERN = Pattern.compile(
-            RID_CLASS + "\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." + TYPE_REGEX + "\\." + LOCATOR_REGEX);
+    private static final String RID_PREFIX = "ri.";
+    private static final int RID_PREFIX_LENGTH = 3;
+    private static final char SEPARATOR = '.';
+
+    private static final int INDEX_INVALID = -1;
+    private static final int INDEX_END = -2;
 
     private final String resourceIdentifier;
     private final int serviceIndex;
     private final int instanceIndex;
     private final int typeIndex;
-    private final int locatorIndex;
 
-    private ResourceIdentifier(
-            String validatedString, int serviceIndex, int instanceIndex, int typeIndex, int locatorIndex) {
+    private ResourceIdentifier(String validatedString, int serviceIndex, int instanceIndex, int typeIndex) {
         this.resourceIdentifier = validatedString;
         this.serviceIndex = serviceIndex;
         this.instanceIndex = instanceIndex;
         this.typeIndex = typeIndex;
-        this.locatorIndex = locatorIndex;
     }
 
     /**
@@ -79,7 +67,7 @@ public final class ResourceIdentifier {
      * @return the service component from this identifier
      */
     public String getService() {
-        return resourceIdentifier.substring(RID_CLASS.length() + SEPARATOR.length(), serviceIndex);
+        return resourceIdentifier.substring(RID_PREFIX_LENGTH, serviceIndex);
     }
 
     /**
@@ -106,7 +94,7 @@ public final class ResourceIdentifier {
      * @return the locator component from this identifier
      */
     public String getLocator() {
-        return resourceIdentifier.substring(typeIndex + 1, locatorIndex);
+        return resourceIdentifier.substring(typeIndex + 1);
     }
 
     /**
@@ -162,7 +150,35 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValid(String rid) {
-        return rid != null && SPEC_PATTERN.matcher(rid).matches();
+        if (rid == null) {
+            return false;
+        }
+
+        if (!rid.startsWith(RID_PREFIX)) {
+            return false;
+        }
+
+        int serviceIndex = getServiceIndex(rid, RID_PREFIX_LENGTH);
+        if (serviceIndex < 0) {
+            return false;
+        }
+
+        int instanceIndex = getInstanceIndex(rid, serviceIndex + 1);
+        if (instanceIndex < 0) {
+            return false;
+        }
+
+        int typeIndex = getTypeIndex(rid, instanceIndex + 1);
+        if (typeIndex < 0) {
+            return false;
+        }
+
+        int locatorIndex = getLocatorIndex(rid, typeIndex + 1);
+        if (locatorIndex != INDEX_END) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -173,7 +189,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidService(String service) {
-        return service != null && SERVICE_PATTERN.matcher(service).matches();
+        return getServiceIndex(service, 0) == INDEX_END;
     }
 
     /**
@@ -184,7 +200,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidInstance(String instance) {
-        return instance != null && INSTANCE_PATTERN.matcher(instance).matches();
+        return getInstanceIndex(instance, 0) == INDEX_END;
     }
 
     /**
@@ -195,7 +211,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidType(String type) {
-        return type != null && TYPE_PATTERN.matcher(type).matches();
+        return getTypeIndex(type, 0) == INDEX_END;
     }
 
     /**
@@ -206,7 +222,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidLocator(String locator) {
-        return locator != null && LOCATOR_PATTERN.matcher(locator).matches();
+        return getLocatorIndex(locator, 0) == INDEX_END;
     }
 
     /**
@@ -230,21 +246,12 @@ public final class ResourceIdentifier {
      * @throws IllegalArgumentException if the input string is not a valid resource identifier
      */
     public static ResourceIdentifier of(String rid) {
-        if (rid != null) {
-            Matcher matcher = SPEC_PATTERN.matcher(rid);
-            if (matcher.matches()) {
-                int serviceIndex = matcher.end(1);
-                int instanceIndex = matcher.end(2);
-                int typeIndex = matcher.end(3);
-                int locatorIndex = matcher.end(4);
-                if (instanceIndex == -1) {
-                    // the 'instance' regex is the only one that has a '?' and tolerates an empty string
-                    instanceIndex = serviceIndex + 1;
-                }
-                return new ResourceIdentifier(rid, serviceIndex, instanceIndex, typeIndex, locatorIndex);
-            }
+        ResourceIdentifier resultRid = tryOf(rid);
+        if (resultRid == null) {
+            throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
         }
-        throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
+
+        return resultRid;
     }
 
     /**
@@ -266,13 +273,12 @@ public final class ResourceIdentifier {
         checkLocatorIsValid(locator);
 
         String resourceIdentifier =
-                RID_CLASS + SEPARATOR + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
+                RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
 
-        int serviceIndex = RID_CLASS.length() + SEPARATOR.length() + service.length();
-        int instanceIndex = serviceIndex + SEPARATOR.length() + instance.length();
-        int typeIndex = instanceIndex + SEPARATOR.length() + type.length();
-        int locatorIndex = typeIndex + SEPARATOR.length() + locator.length();
-        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex, locatorIndex);
+        int serviceIndex = RID_PREFIX_LENGTH + service.length();
+        int instanceIndex = serviceIndex + 1 + instance.length();
+        int typeIndex = instanceIndex + 1 + type.length();
+        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
     }
 
     /**
@@ -297,6 +303,38 @@ public final class ResourceIdentifier {
         return of(service, instance, type, builder.toString());
     }
 
+    private static ResourceIdentifier tryOf(String rid) {
+        if (rid == null) {
+            return null;
+        }
+
+        if (!rid.startsWith(RID_PREFIX)) {
+            return null;
+        }
+
+        int serviceIndex = getServiceIndex(rid, RID_PREFIX_LENGTH);
+        if (serviceIndex < 0) {
+            return null;
+        }
+
+        int instanceIndex = getInstanceIndex(rid, serviceIndex + 1);
+        if (instanceIndex < 0) {
+            return null;
+        }
+
+        int typeIndex = getTypeIndex(rid, instanceIndex + 1);
+        if (typeIndex < 0) {
+            return null;
+        }
+
+        int locatorIndex = getLocatorIndex(rid, typeIndex + 1);
+        if (locatorIndex != INDEX_END) {
+            return null;
+        }
+
+        return new ResourceIdentifier(rid, serviceIndex, instanceIndex, typeIndex);
+    }
+
     private static void checkServiceIsValid(String service) {
         if (!isValidService(service)) {
             throw new IllegalArgumentException("Illegal service format: " + service);
@@ -315,9 +353,108 @@ public final class ResourceIdentifier {
         }
     }
 
-    private static void checkLocatorIsValid(String value) {
-        if (!isValidLocator(value)) {
-            throw new IllegalArgumentException("Illegal locator format: " + value);
+    private static void checkLocatorIsValid(String locator) {
+        if (!isValidLocator(locator)) {
+            throw new IllegalArgumentException("Illegal locator format: " + locator);
         }
+    }
+
+    private static int getServiceIndex(CharSequence value, int start) {
+        if (value == null) {
+            return INDEX_INVALID;
+        }
+
+        if (start >= value.length()) {
+            return INDEX_INVALID;
+        }
+
+        for (int i = start; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (i == start) {
+                if (!isLowerAlpha(ch)) {
+                    return INDEX_INVALID;
+                }
+            } else if (ch == SEPARATOR) {
+                return i;
+            } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
+                return INDEX_INVALID;
+            }
+        }
+
+        return INDEX_END;
+    }
+
+    @SuppressWarnings("CyclomaticComplexity")
+    private static int getInstanceIndex(CharSequence value, int start) {
+        if (value == null) {
+            return INDEX_INVALID;
+        }
+
+        if (start > value.length()) {
+            return INDEX_INVALID;
+        }
+
+        for (int i = start; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (ch == SEPARATOR) {
+                return i;
+            } else if (i == start) {
+                if (!(isLowerAlpha(ch) || isDigit(ch))) {
+                    return INDEX_INVALID;
+                }
+            } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
+                return INDEX_INVALID;
+            }
+        }
+
+        return INDEX_END;
+    }
+
+    private static int getTypeIndex(CharSequence value, int start) {
+        // The type component has the same format as the service component
+        return getServiceIndex(value, start);
+    }
+
+    private static int getLocatorIndex(CharSequence value, int start) {
+        if (value == null) {
+            return INDEX_INVALID;
+        }
+
+        if (start >= value.length()) {
+            return INDEX_INVALID;
+        }
+
+        for (int i = start; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (!(isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDot(ch) || isDash(ch) || isUnderscore(ch))) {
+                return INDEX_INVALID;
+            }
+        }
+
+        return INDEX_END;
+    }
+
+    private static boolean isLowerAlpha(char ch) {
+        return 'a' <= ch && ch <= 'z';
+    }
+
+    private static boolean isUpperAlpha(char ch) {
+        return 'A' <= ch && ch <= 'Z';
+    }
+
+    private static boolean isDigit(char ch) {
+        return '0' <= ch && ch <= '9';
+    }
+
+    private static boolean isDot(char ch) {
+        return ch == '.';
+    }
+
+    private static boolean isDash(char ch) {
+        return ch == '-';
+    }
+
+    private static boolean isUnderscore(char ch) {
+        return ch == '_';
     }
 }
