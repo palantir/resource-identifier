@@ -41,8 +41,13 @@ import java.util.Objects;
  * </ol>
  */
 public final class ResourceIdentifier {
+
     private static final String RID_PREFIX = "ri.";
+    private static final int RID_PREFIX_LENGTH = 3;
     private static final char SEPARATOR = '.';
+
+    private static final int INDEX_INVALID = -1;
+    private static final int INDEX_END = -2;
 
     private final String resourceIdentifier;
     private final int serviceIndex;
@@ -62,7 +67,7 @@ public final class ResourceIdentifier {
      * @return the service component from this identifier
      */
     public String getService() {
-        return resourceIdentifier.substring(RID_PREFIX.length(), serviceIndex);
+        return resourceIdentifier.substring(RID_PREFIX_LENGTH, serviceIndex);
     }
 
     /**
@@ -153,7 +158,7 @@ public final class ResourceIdentifier {
             return false;
         }
 
-        int serviceIndex = getServiceIndex(rid, RID_PREFIX.length());
+        int serviceIndex = getServiceIndex(rid, RID_PREFIX_LENGTH);
         if (serviceIndex < 0) {
             return false;
         }
@@ -169,7 +174,7 @@ public final class ResourceIdentifier {
         }
 
         int locatorIndex = getLocatorIndex(rid, typeIndex + 1);
-        if (locatorIndex != Index.END) {
+        if (locatorIndex != INDEX_END) {
             return false;
         }
 
@@ -184,7 +189,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidService(String service) {
-        return getServiceIndex(service, 0) == Index.END;
+        return getServiceIndex(service, 0) == INDEX_END;
     }
 
     /**
@@ -195,7 +200,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidInstance(String instance) {
-        return getInstanceIndex(instance, 0) == Index.END;
+        return getInstanceIndex(instance, 0) == INDEX_END;
     }
 
     /**
@@ -206,7 +211,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidType(String type) {
-        return getTypeIndex(type, 0) == Index.END;
+        return getTypeIndex(type, 0) == INDEX_END;
     }
 
     /**
@@ -217,7 +222,7 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidLocator(String locator) {
-        return getLocatorIndex(locator, 0) == Index.END;
+        return getLocatorIndex(locator, 0) == INDEX_END;
     }
 
     /**
@@ -270,7 +275,7 @@ public final class ResourceIdentifier {
         String resourceIdentifier =
                 RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
 
-        int serviceIndex = RID_PREFIX.length() + service.length();
+        int serviceIndex = RID_PREFIX_LENGTH + service.length();
         int instanceIndex = serviceIndex + 1 + instance.length();
         int typeIndex = instanceIndex + 1 + type.length();
         return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
@@ -307,7 +312,7 @@ public final class ResourceIdentifier {
             return null;
         }
 
-        int serviceIndex = getServiceIndex(rid, RID_PREFIX.length());
+        int serviceIndex = getServiceIndex(rid, RID_PREFIX_LENGTH);
         if (serviceIndex < 0) {
             return null;
         }
@@ -323,7 +328,7 @@ public final class ResourceIdentifier {
         }
 
         int locatorIndex = getLocatorIndex(rid, typeIndex + 1);
-        if (locatorIndex != Index.END) {
+        if (locatorIndex != INDEX_END) {
             return null;
         }
 
@@ -354,39 +359,39 @@ public final class ResourceIdentifier {
         }
     }
 
-    private static int getServiceIndex(String value, int start) {
+    private static int getServiceIndex(CharSequence value, int start) {
         if (value == null) {
-            return Index.INVALID;
+            return INDEX_INVALID;
         }
 
-        if (start + 1 > value.length()) {
-            return Index.INVALID;
+        if (start >= value.length()) {
+            return INDEX_INVALID;
         }
 
         for (int i = start; i < value.length(); i++) {
             char ch = value.charAt(i);
             if (i == start) {
                 if (!isLowerAlpha(ch)) {
-                    return Index.INVALID;
+                    return INDEX_INVALID;
                 }
             } else if (ch == SEPARATOR) {
                 return i;
             } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
-                return Index.INVALID;
+                return INDEX_INVALID;
             }
         }
 
-        return Index.END;
+        return INDEX_END;
     }
 
     @SuppressWarnings("CyclomaticComplexity")
-    private static int getInstanceIndex(String value, int start) {
+    private static int getInstanceIndex(CharSequence value, int start) {
         if (value == null) {
-            return Index.INVALID;
+            return INDEX_INVALID;
         }
 
         if (start > value.length()) {
-            return Index.INVALID;
+            return INDEX_INVALID;
         }
 
         for (int i = start; i < value.length(); i++) {
@@ -395,38 +400,38 @@ public final class ResourceIdentifier {
                 return i;
             } else if (i == start) {
                 if (!(isLowerAlpha(ch) || isDigit(ch))) {
-                    return Index.INVALID;
+                    return INDEX_INVALID;
                 }
             } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
-                return Index.INVALID;
+                return INDEX_INVALID;
             }
         }
 
-        return Index.END;
+        return INDEX_END;
     }
 
-    private static int getTypeIndex(String value, int start) {
+    private static int getTypeIndex(CharSequence value, int start) {
         // The type component has the same format as the service component
         return getServiceIndex(value, start);
     }
 
-    private static int getLocatorIndex(String value, int start) {
+    private static int getLocatorIndex(CharSequence value, int start) {
         if (value == null) {
-            return Index.INVALID;
+            return INDEX_INVALID;
         }
 
-        if (start + 1 > value.length()) {
-            return Index.INVALID;
+        if (start >= value.length()) {
+            return INDEX_INVALID;
         }
 
         for (int i = start; i < value.length(); i++) {
             char ch = value.charAt(i);
             if (!(isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDot(ch) || isDash(ch) || isUnderscore(ch))) {
-                return Index.INVALID;
+                return INDEX_INVALID;
             }
         }
 
-        return Index.END;
+        return INDEX_END;
     }
 
     private static boolean isLowerAlpha(char ch) {
@@ -451,12 +456,5 @@ public final class ResourceIdentifier {
 
     private static boolean isUnderscore(char ch) {
         return ch == '_';
-    }
-
-    private enum Index {
-        ;
-
-        private static final int INVALID = -1;
-        private static final int END = -2;
     }
 }
