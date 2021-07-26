@@ -1,0 +1,7 @@
+type: break
+break:
+  description: Require java 11 (up from java 8) matching our other libraries, and
+    allowing the string-heavy resource-identifier implementation to take advantage
+    of jep280 improvements to string concatenation.
+  links:
+  - https://github.com/palantir/resource-identifier/pull/148
