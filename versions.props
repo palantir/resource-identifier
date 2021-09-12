@@ -1,4 +1,4 @@
 com.fasterxml.jackson.core:* = 2.11.3
 net.jqwik:* = 1.5.5
-org.junit.jupiter:* = 5.7.2
+org.junit.jupiter:* = 5.8.0
 org.openjdk.jmh:* = 1.33
