@@ -189,6 +189,10 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidService(String service) {
+        return isValidService((CharSequence) service);
+    }
+
+    private static boolean isValidService(CharSequence service) {
         return getServiceIndex(service, 0) == INDEX_END;
     }
 
@@ -200,6 +204,10 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidInstance(String instance) {
+        return isValidInstance((CharSequence) instance);
+    }
+
+    private static boolean isValidInstance(CharSequence instance) {
         return getInstanceIndex(instance, 0) == INDEX_END;
     }
 
@@ -211,6 +219,10 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidType(String type) {
+        return isValidType((CharSequence) type);
+    }
+
+    private static boolean isValidType(CharSequence type) {
         return getTypeIndex(type, 0) == INDEX_END;
     }
 
@@ -222,6 +234,10 @@ public final class ResourceIdentifier {
      *         {@code false} otherwise.
      */
     public static boolean isValidLocator(String locator) {
+        return isValidLocator((CharSequence) locator);
+    }
+
+    private static boolean isValidLocator(CharSequence locator) {
         return getLocatorIndex(locator, 0) == INDEX_END;
     }
 
@@ -267,18 +283,7 @@ public final class ResourceIdentifier {
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
     public static ResourceIdentifier of(String service, String instance, String type, String locator) {
-        checkServiceIsValid(service);
-        checkInstanceIsValid(instance);
-        checkTypeIsValid(type);
-        checkLocatorIsValid(locator);
-
-        String resourceIdentifier =
-                RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
-
-        int serviceIndex = RID_PREFIX_LENGTH + service.length();
-        int instanceIndex = serviceIndex + 1 + instance.length();
-        int typeIndex = instanceIndex + 1 + type.length();
-        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
+        return of((CharSequence) service, instance, type, locator);
     }
 
     /**
@@ -296,11 +301,34 @@ public final class ResourceIdentifier {
      */
     public static ResourceIdentifier of(
             String service, String instance, String type, String firstLocatorComponent, String... locatorComponents) {
-        StringBuilder builder = new StringBuilder(firstLocatorComponent);
+        int locatorLength = firstLocatorComponent.length() + locatorComponents.length;
         for (String component : locatorComponents) {
-            builder.append(SEPARATOR).append(component);
+            locatorLength += component.length();
         }
-        return of(service, instance, type, builder.toString());
+
+        StringBuilder locator = new StringBuilder(locatorLength);
+        locator.append(firstLocatorComponent);
+        for (String component : locatorComponents) {
+            locator.append(SEPARATOR).append(component);
+        }
+
+        return of(service, instance, type, locator);
+    }
+
+    private static ResourceIdentifier of(
+            CharSequence service, CharSequence instance, CharSequence type, CharSequence locator) {
+        checkServiceIsValid(service);
+        checkInstanceIsValid(instance);
+        checkTypeIsValid(type);
+        checkLocatorIsValid(locator);
+
+        String resourceIdentifier =
+                RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
+
+        int serviceIndex = RID_PREFIX_LENGTH + service.length();
+        int instanceIndex = serviceIndex + 1 + instance.length();
+        int typeIndex = instanceIndex + 1 + type.length();
+        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
     }
 
     private static ResourceIdentifier tryOf(String rid) {
@@ -335,25 +363,25 @@ public final class ResourceIdentifier {
         return new ResourceIdentifier(rid, serviceIndex, instanceIndex, typeIndex);
     }
 
-    private static void checkServiceIsValid(String service) {
+    private static void checkServiceIsValid(CharSequence service) {
         if (!isValidService(service)) {
             throw new IllegalArgumentException("Illegal service format: " + service);
         }
     }
 
-    private static void checkInstanceIsValid(String instance) {
+    private static void checkInstanceIsValid(CharSequence instance) {
         if (!isValidInstance(instance)) {
             throw new IllegalArgumentException("Illegal instance format: " + instance);
         }
     }
 
-    private static void checkTypeIsValid(String type) {
+    private static void checkTypeIsValid(CharSequence type) {
         if (!isValidType(type)) {
             throw new IllegalArgumentException("Illegal type format: " + type);
         }
     }
 
-    private static void checkLocatorIsValid(String locator) {
+    private static void checkLocatorIsValid(CharSequence locator) {
         if (!isValidLocator(locator)) {
             throw new IllegalArgumentException("Illegal locator format: " + locator);
         }
