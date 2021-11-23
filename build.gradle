@@ -31,12 +31,12 @@ group 'com.palantir.ri'
 version gitVersion()
 
 apply plugin: 'com.palantir.external-publish-jar'
+apply plugin: 'com.palantir.baseline-java-versions'
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 11
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
@@ -67,4 +67,8 @@ jmh {
 tasks.jmhCompileGeneratedClasses {
     options.annotationProcessorPath = configurations.errorprone
     options.errorprone.enabled = false
+}
+
+javaVersions {
+    libraryTarget = 11
 }
