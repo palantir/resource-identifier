@@ -3,7 +3,7 @@ com.fasterxml.jackson.core:jackson-annotations:2.13.2 (2 constraints: c1174d71)
 
 [Test dependencies]
 com.fasterxml.jackson.core:jackson-core:2.13.2 (1 constraints: 88123721)
-com.fasterxml.jackson.core:jackson-databind:2.13.2 (1 constraints: 3a053a3b)
+com.fasterxml.jackson.core:jackson-databind:2.13.2.1 (1 constraints: 99053b46)
 net.jqwik:jqwik:1.6.5 (1 constraints: 0e050736)
 net.jqwik:jqwik-api:1.6.5 (4 constraints: 6324be4b)
 net.jqwik:jqwik-engine:1.6.5 (1 constraints: 9f07f96c)
