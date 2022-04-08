@@ -1,4 +1,5 @@
 com.fasterxml.jackson.core:* = 2.13.2
+com.fasterxml.jackson.core:jackson-databind = 2.13.2.1
 net.jqwik:* = 1.6.5
 org.junit.jupiter:* = 5.8.2
 org.openjdk.jmh:* = 1.35
