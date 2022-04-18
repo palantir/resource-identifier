@@ -40,6 +40,7 @@ repositories {
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.palantir.safe-logging:safe-logging'
 
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
     testImplementation 'net.jqwik:jqwik'

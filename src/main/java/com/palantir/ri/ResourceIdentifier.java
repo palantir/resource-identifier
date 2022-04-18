@@ -18,6 +18,7 @@ package com.palantir.ri;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.palantir.logsafe.Safe;
 import java.util.Objects;
 
 /**
@@ -282,7 +283,8 @@ public final class ResourceIdentifier {
      *
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
-    public static ResourceIdentifier of(String service, String instance, String type, String locator) {
+    public static ResourceIdentifier of(
+            @Safe String service, @Safe String instance, @Safe String type, String locator) {
         return of((CharSequence) service, instance, type, locator);
     }
 
@@ -300,7 +302,11 @@ public final class ResourceIdentifier {
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
     public static ResourceIdentifier of(
-            String service, String instance, String type, String firstLocatorComponent, String... locatorComponents) {
+            @Safe String service,
+            @Safe String instance,
+            @Safe String type,
+            String firstLocatorComponent,
+            String... locatorComponents) {
         int locatorLength = firstLocatorComponent.length() + locatorComponents.length;
         for (String component : locatorComponents) {
             locatorLength += component.length();
@@ -316,7 +322,7 @@ public final class ResourceIdentifier {
     }
 
     private static ResourceIdentifier of(
-            CharSequence service, CharSequence instance, CharSequence type, CharSequence locator) {
+            @Safe CharSequence service, @Safe CharSequence instance, @Safe CharSequence type, CharSequence locator) {
         checkServiceIsValid(service);
         checkInstanceIsValid(instance);
         checkTypeIsValid(type);
