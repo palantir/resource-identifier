@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: ResourceIdentifier factories require safe inputs for non-locator elements
+  links:
+  - https://github.com/palantir/resource-identifier/pull/292
