@@ -1,5 +1,5 @@
-com.fasterxml.jackson.core:* = 2.13.2
-com.fasterxml.jackson.core:jackson-databind = 2.13.2.1
+com.fasterxml.jackson.core:* = 2.13.3
+com.fasterxml.jackson.core:jackson-databind = 2.13.3
 com.palantir.safe-logging:* = 1.26.0
 net.jqwik:* = 1.6.5
 org.junit.jupiter:* = 5.8.2
