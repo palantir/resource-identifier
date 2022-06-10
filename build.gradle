@@ -5,41 +5,37 @@ buildscript {
     }
 
     dependencies {
+        classpath 'com.palantir.baseline:gradle-baseline-java:4.139.0'
+        classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.11.0'
+        classpath 'com.palantir.gradle.externalpublish:gradle-external-publish-plugin:1.11.0'
+        classpath 'com.palantir.gradle.gitversion:gradle-git-version:0.15.0'
         classpath 'com.palantir.gradle.jdks:gradle-jdks:0.16.0'
         classpath 'com.palantir.gradle.jdkslatest:gradle-jdks-latest:0.1.0'
         classpath 'com.palantir.javaformat:gradle-palantir-java-format:2.24.0'
-        classpath 'com.palantir.gradle.externalpublish:gradle-external-publish-plugin:1.11.0'
-        classpath 'com.netflix.nebula:gradle-dependency-lock-plugin:7.0.1'
-        classpath 'com.palantir.baseline:gradle-baseline-java:4.139.0'
-        classpath 'com.palantir.gradle.consistentversions:gradle-consistent-versions:2.11.0'
-        classpath 'com.palantir.gradle.gitversion:gradle-git-version:0.15.0'
         classpath 'gradle.plugin.org.inferred:gradle-processors:3.6.0'
         classpath 'me.champeau.jmh:jmh-gradle-plugin:0.6.5'
     }
 }
-allprojects {
-    apply plugin: 'com.palantir.java-format'
-}
 
-apply plugin: 'com.palantir.external-publish'
 apply plugin: 'java-library'
 apply plugin: 'com.palantir.baseline'
-apply plugin: 'com.palantir.git-version'
+apply plugin: 'com.palantir.baseline-java-versions'
 apply plugin: 'com.palantir.consistent-versions'
-apply plugin: 'org.inferred.processors'
+apply plugin: 'com.palantir.external-publish'
+apply plugin: 'com.palantir.git-version'
+apply plugin: 'com.palantir.java-format'
+apply plugin: 'com.palantir.jdks.latest'
 apply plugin: 'me.champeau.jmh'
+apply plugin: 'org.inferred.processors'
 
 group 'com.palantir.ri'
 version gitVersion()
 
 apply plugin: 'com.palantir.external-publish-jar'
-apply plugin: 'com.palantir.baseline-java-versions'
-apply plugin: 'com.palantir.jdks.latest'
 
 repositories {
     mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
 }
-
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
@@ -50,8 +46,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     jmh 'org.openjdk.jmh:jmh-core'
-    jmh 'org.openjdk.jmh:jmh-generator-annprocess'
-
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess
 }
 
 configurations.testCompileClasspath {
