@@ -46,7 +46,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     jmh 'org.openjdk.jmh:jmh-core'
-    jmh 'org.openjdk.jmh:jmh-generator-annprocess
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess'
 }
 
 configurations.testCompileClasspath {
