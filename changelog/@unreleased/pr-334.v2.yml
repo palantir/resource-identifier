@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Updated ResourceIdentifier equals implementation comment
+  links:
+  - https://github.com/palantir/resource-identifier/pull/334
