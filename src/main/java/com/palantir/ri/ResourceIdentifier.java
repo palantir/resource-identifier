@@ -140,7 +140,7 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
-        return resourceIdentifier.equals(other.resourceIdentifier);
+        return this.hashCode() == other.hashCode() && resourceIdentifier.equals(other.resourceIdentifier);
     }
 
     /**
