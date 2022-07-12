@@ -137,6 +137,9 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
+        // Performance note from https://github.com/palantir/resource-identifier/pull/332:
+        // We explicitly check hashCode equality first to short circuit via memoized RID String hashCode for
+        // any mismatch to avoid comparing full RID strings as RIDs are often the same length with common prefix.
         return this.hashCode() == other.hashCode() && resourceIdentifier.equals(other.resourceIdentifier);
     }
 
