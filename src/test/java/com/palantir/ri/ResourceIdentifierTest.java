@@ -232,11 +232,12 @@ final class ResourceIdentifierTest {
     @Test
     void testEqualsHashCode() {
         ResourceIdentifier prevRid = null;
-        for (int i = 0; i < goodIds.size(); ++i) {
-            ResourceIdentifier curRid = ResourceIdentifier.of(goodIds.get(i));
-            ResourceIdentifier curRid2 = ResourceIdentifier.of(goodIds.get(i));
+        for (String goodId : goodIds) {
+            ResourceIdentifier curRid = ResourceIdentifier.of(goodId);
+            ResourceIdentifier curRid2 = ResourceIdentifier.of(goodId);
             assertEquals(curRid, curRid);
             assertEquals(curRid, curRid2);
+            assertEquals(curRid2, curRid);
             assertEquals(curRid.toString(), curRid2.toString());
             assertEquals(curRid.hashCode(), curRid2.hashCode());
             assertNotEquals(curRid, NotEqualsObj.INSTANCE);
