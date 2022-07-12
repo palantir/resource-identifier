@@ -19,7 +19,6 @@ package com.palantir.ri;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.palantir.logsafe.Safe;
-import java.util.Objects;
 
 /**
  * Defines a common format for wrapping existing unique identifiers to provide additional context. This class
@@ -112,9 +111,7 @@ public final class ResourceIdentifier {
     }
 
     /**
-     * Returns the hash code value for identifier.  The hash code
-     * is calculated using the Java {@link Objects#hash(Object...)} method
-     * over each of the 4 components.
+     * Returns the hash code value for identifier.
      *
      * @return the hash code value for this identifier
      */
@@ -140,7 +137,7 @@ public final class ResourceIdentifier {
             return false;
         }
         ResourceIdentifier other = (ResourceIdentifier) obj;
-        return resourceIdentifier.equals(other.resourceIdentifier);
+        return this.hashCode() == other.hashCode() && resourceIdentifier.equals(other.resourceIdentifier);
     }
 
     /**
