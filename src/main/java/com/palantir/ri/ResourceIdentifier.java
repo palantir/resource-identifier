@@ -98,6 +98,67 @@ public final class ResourceIdentifier {
     }
 
     /**
+     * Compares the service component of this identifier with the given service.  Returns
+     * {@code true} if and only if the service component this identifier is equal to the given service.
+     *
+     * @param service the service to be compared for equality with the service component of this identifier
+     * @return {@code true} if the service component of this identifier is equal to the given service, {@code false}
+     * otherwise
+     */
+    public boolean hasService(String service) {
+        return substringMatches(RID_PREFIX_LENGTH, serviceIndex, service);
+    }
+
+    /**
+     * Compares the instance component of this identifier with the given instance.  Returns
+     * {@code true} if and only if the instance component this identifier is equal to the given instance.
+     *
+     * @param instance the instance to be compared for equality with the instance component of this identifier
+     * @return {@code true} if the instance component of this identifier is equal to the given instance, {@code false}
+     * otherwise
+     */
+    public boolean hasInstance(String instance) {
+        return substringMatches(serviceIndex + 1, instanceIndex, instance);
+    }
+
+    /**
+     * Compares the type component of this identifier with the given type.  Returns
+     * {@code true} if and only if the type component this identifier is equal to the given type.
+     *
+     * @param type the type to be compared for equality with the type component of this identifier
+     * @return {@code true} if the type component of this identifier is equal to the given type, {@code false}
+     * otherwise
+     */
+    public boolean hasType(String type) {
+        return substringMatches(instanceIndex + 1, typeIndex, type);
+    }
+
+    /**
+     * Compares the locator component of this identifier with the given locator.  Returns
+     * {@code true} if and only if the locator component this identifier is equal to the given locator.
+     *
+     * @param locator the locator to be compared for equality with the locator component of this identifier
+     * @return {@code true} if the locator component of this identifier is equal to the given locator, {@code false}
+     * otherwise
+     */
+    public boolean hasLocator(String locator) {
+        return substringMatches(typeIndex + 1, resourceIdentifier.length(), locator);
+    }
+
+    private boolean substringMatches(int beginIndex, int endIndex, String other) {
+        if (other == null) {
+            return false;
+        }
+
+        int length = endIndex - beginIndex;
+        if (other.length() != length) {
+            return false;
+        }
+
+        return resourceIdentifier.regionMatches(beginIndex, other, 0, length);
+    }
+
+    /**
      * Returns a string representation of this ResourceIdentifier. The string representation
      * follows the format specification using the "ri" header followed by the 4 components
      * separated by periods.
