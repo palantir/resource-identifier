@@ -160,8 +160,29 @@ final class ResourceIdentifierTest {
             String service = resourceId.getService();
             String instance = resourceId.getInstance();
             String type = resourceId.getType();
-            String oid = resourceId.getLocator();
-            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, oid), rid);
+            String locator = resourceId.getLocator();
+            assertEquals(resourceId, ResourceIdentifier.of(service, instance, type, locator), rid);
+        }
+    }
+
+    @Test
+    void testHas() {
+        for (String rid : goodIds) {
+            ResourceIdentifier resourceId = ResourceIdentifier.of(rid);
+            assertTrue(resourceId.hasService(resourceId.getService()));
+            assertTrue(resourceId.hasInstance(resourceId.getInstance()));
+            assertTrue(resourceId.hasType(resourceId.getType()));
+            assertTrue(resourceId.hasLocator(resourceId.getLocator()));
+
+            assertFalse(resourceId.hasService(null));
+            assertFalse(resourceId.hasInstance(null));
+            assertFalse(resourceId.hasType(null));
+            assertFalse(resourceId.hasLocator(null));
+
+            assertFalse(resourceId.hasService(resourceId.getService() + "a"));
+            assertFalse(resourceId.hasInstance(resourceId.getInstance() + "a"));
+            assertFalse(resourceId.hasType(resourceId.getType() + "a"));
+            assertFalse(resourceId.hasLocator(resourceId.getLocator() + "a"));
         }
     }
 
