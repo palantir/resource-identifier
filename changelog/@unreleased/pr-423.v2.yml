@@ -1,0 +1,6 @@
+type: feature
+feature:
+  description: Provide methods to compare `ResourceIdentifier` components without
+    allocating.
+  links:
+  - https://github.com/palantir/resource-identifier/pull/423
