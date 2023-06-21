@@ -1,10 +1,10 @@
 # Run ./gradlew --write-locks to regenerate this file
-com.fasterxml.jackson.core:jackson-annotations:2.14.2 (2 constraints: c3178871)
+com.fasterxml.jackson.core:jackson-annotations:2.15.2 (2 constraints: c517c371)
 com.palantir.safe-logging:safe-logging:3.5.0 (1 constraints: 0a050936)
 
 [Test dependencies]
-com.fasterxml.jackson.core:jackson-core:2.14.2 (1 constraints: 89123a21)
-com.fasterxml.jackson.core:jackson-databind:2.14.2 (1 constraints: 3b053d3b)
+com.fasterxml.jackson.core:jackson-core:2.15.2 (1 constraints: 8a123d21)
+com.fasterxml.jackson.core:jackson-databind:2.15.2 (1 constraints: 3c05403b)
 net.jqwik:jqwik:1.7.3 (1 constraints: 0d050836)
 net.jqwik:jqwik-api:1.7.3 (4 constraints: 5f24154b)
 net.jqwik:jqwik-engine:1.7.3 (1 constraints: 9e07fa6c)
