@@ -74,5 +74,5 @@ tasks.jmhCompileGeneratedClasses {
 
 javaVersions {
     libraryTarget = 11
-    runtime = 17
+    runtime = 21
 }
