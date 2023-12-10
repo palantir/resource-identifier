@@ -12,7 +12,7 @@ buildscript {
         classpath 'com.palantir.gradle.gitversion:gradle-git-version:3.0.0'
         classpath 'com.palantir.gradle.jdks:gradle-jdks:0.34.0'
         classpath 'com.palantir.gradle.jdkslatest:gradle-jdks-latest:0.12.0'
-        classpath 'com.palantir.javaformat:gradle-palantir-java-format:2.38.0'
+        classpath 'com.palantir.javaformat:gradle-palantir-java-format:2.39.0'
         classpath 'gradle.plugin.org.inferred:gradle-processors:3.7.0'
         classpath 'me.champeau.jmh:jmh-gradle-plugin:0.7.2'
     }
