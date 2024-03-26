@@ -45,6 +45,7 @@ repositories {
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.google.errorprone:error_prone_annotations'
     implementation 'com.palantir.safe-logging:safe-logging'
 
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
