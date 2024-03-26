@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Annotate `ResourceIdentifier` with `@Immutable`.
+  links:
+  - https://github.com/palantir/resource-identifier/pull/550
