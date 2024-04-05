@@ -18,6 +18,7 @@ package com.palantir.ri;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.errorprone.annotations.Immutable;
 import com.palantir.logsafe.Safe;
 
 /**
@@ -40,6 +41,7 @@ import com.palantir.logsafe.Safe;
  *      {@code [a-zA-Z0-9\-\._]+}
  * </ol>
  */
+@Immutable
 public final class ResourceIdentifier {
 
     private static final String RID_PREFIX = "ri.";

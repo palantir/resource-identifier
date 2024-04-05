@@ -1,5 +1,6 @@
 # Run ./gradlew writeVersionsLock to regenerate this file
 com.fasterxml.jackson.core:jackson-annotations:2.16.1 (2 constraints: c517c771)
+com.google.errorprone:error_prone_annotations:2.26.1 (1 constraints: 3d05463b)
 com.palantir.safe-logging:safe-logging:3.7.0 (1 constraints: 0c050f36)
 
 [Test dependencies]
