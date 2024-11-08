@@ -16,13 +16,15 @@
 
 package com.palantir.ri;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.UnsafeArg;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,54 +105,40 @@ final class ResourceIdentifierTest {
 
     @Test
     void testConstructionErrorMessage() {
-        try {
-            ResourceIdentifier.of(null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal resource identifier format: null", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("ri.bad....dots");
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal resource identifier format: ri.bad....dots", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("123Service", "", "type", "name");
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal service format: 123Service", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("service", "Instance", "type", "name");
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal instance format: Instance", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("service", "i", "type-name", "!@#$");
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal locator format: !@#$", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of(null, null, null, null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal service format: null", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("service", null, null, null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal instance format: null", e.getMessage());
-        }
-        try {
-            ResourceIdentifier.of("service", "", null, null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Illegal type format: null", e.getMessage());
-        }
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal resource identifier format")
+                .containsArgs(UnsafeArg.of("rid", null));
+
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of("ri.bad....dots"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal resource identifier format")
+                .containsArgs(UnsafeArg.of("rid", "ri.bad....dots"));
+
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of("123Service", "", "type", "name"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal service format")
+                .containsArgs(SafeArg.of("service", "123Service"));
+
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of("service", "i", "type-name", "!@#$"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal locator format")
+                .containsArgs(UnsafeArg.of("locator", "!@#$"));
+
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of(null, null, null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal service format")
+                .containsArgs(SafeArg.of("service", null));
+
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of("service", null, null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal instance format")
+                .containsArgs(SafeArg.of("instance", null));
+
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of("service", "", null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasLogMessage("Illegal type format")
+                .containsArgs(SafeArg.of("type", null));
     }
 
     @Test

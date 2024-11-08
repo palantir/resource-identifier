@@ -20,6 +20,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.errorprone.annotations.Immutable;
 import com.palantir.logsafe.Safe;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.Unsafe;
+import com.palantir.logsafe.UnsafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 
 /**
  * Defines a common format for wrapping existing unique identifiers to provide additional context. This class
@@ -328,7 +332,7 @@ public final class ResourceIdentifier {
     public static ResourceIdentifier of(String rid) {
         ResourceIdentifier resultRid = tryOf(rid);
         if (resultRid == null) {
-            throw new IllegalArgumentException("Illegal resource identifier format: " + rid);
+            throw new SafeIllegalArgumentException("Illegal resource identifier format", UnsafeArg.of("rid", rid));
         }
 
         return resultRid;
@@ -432,27 +436,27 @@ public final class ResourceIdentifier {
         return new ResourceIdentifier(rid, serviceIndex, instanceIndex, typeIndex);
     }
 
-    private static void checkServiceIsValid(CharSequence service) {
+    private static void checkServiceIsValid(@Safe CharSequence service) {
         if (!isValidService(service)) {
-            throw new IllegalArgumentException("Illegal service format: " + service);
+            throw new SafeIllegalArgumentException("Illegal service format", SafeArg.of("service", service));
         }
     }
 
-    private static void checkInstanceIsValid(CharSequence instance) {
+    private static void checkInstanceIsValid(@Safe CharSequence instance) {
         if (!isValidInstance(instance)) {
-            throw new IllegalArgumentException("Illegal instance format: " + instance);
+            throw new SafeIllegalArgumentException("Illegal instance format", SafeArg.of("instance", instance));
         }
     }
 
-    private static void checkTypeIsValid(CharSequence type) {
+    private static void checkTypeIsValid(@Safe CharSequence type) {
         if (!isValidType(type)) {
-            throw new IllegalArgumentException("Illegal type format: " + type);
+            throw new SafeIllegalArgumentException("Illegal type format", SafeArg.of("type", type));
         }
     }
 
-    private static void checkLocatorIsValid(CharSequence locator) {
+    private static void checkLocatorIsValid(@Unsafe CharSequence locator) {
         if (!isValidLocator(locator)) {
-            throw new IllegalArgumentException("Illegal locator format: " + locator);
+            throw new SafeIllegalArgumentException("Illegal locator format", UnsafeArg.of("locator", locator));
         }
     }
 
