@@ -47,10 +47,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.google.errorprone:error_prone_annotations'
     implementation 'com.palantir.safe-logging:safe-logging'
+    implementation 'com.palantir.safe-logging:preconditions'
 
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
     testImplementation 'net.jqwik:jqwik'
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'com.palantir.safe-logging:preconditions-assertj'
 
     jmh 'org.openjdk.jmh:jmh-core'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess'
