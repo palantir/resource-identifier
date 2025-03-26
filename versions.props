@@ -1,7 +1,8 @@
 com.fasterxml.jackson.core:* = 2.17.2
 com.fasterxml.jackson.core:jackson-databind = 2.17.2
-com.google.errorprone:error_prone_* = 2.26.1
-com.palantir.safe-logging:* = 3.7.0
+com.google.errorprone:error_prone_* = 2.36.0
+com.palantir.safe-logging:* = 3.8.0
 net.jqwik:* = 1.9.2
-org.junit.jupiter:* = 5.11.4
+org.junit.jupiter:* = 5.12.1
+org.junit.platform:* = 1.12.1
 org.openjdk.jmh:* = 1.37
