@@ -52,12 +52,10 @@ public final class ResourceIdentifier {
     private static final int RID_PREFIX_LENGTH = 3;
     private static final char SEPARATOR = '.';
 
-    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR =
-            FastAsciiPredicate.compile(ResourceIdentifier::isLowerAlpha);
+    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR = ResourceIdentifier::isLowerAlpha;
     private static final CharPredicate IS_VALID_SERVICE_SUBSEQUENT_CHAR =
-            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
-    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR =
-            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch));
+            ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch);
+    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR = ch -> isLowerAlpha(ch) || isDigit(ch);
     private static final CharPredicate IS_VALID_INSTANCE_SUBSEQUENT_CHAR = IS_VALID_SERVICE_SUBSEQUENT_CHAR;
     private static final CharPredicate IS_VALID_LOCATOR_CHAR = FastAsciiPredicate.compile(
             ch -> isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDash(ch) || isDot(ch) || isUnderscore(ch));
