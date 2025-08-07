@@ -23,7 +23,6 @@ buildscript {
 }
 
 apply plugin: 'java-library'
-apply plugin: 'com.palantir.baseline'
 apply plugin: 'com.palantir.baseline-java-versions'
 apply plugin: 'com.palantir.consistent-versions'
 apply plugin: 'com.palantir.external-publish'
