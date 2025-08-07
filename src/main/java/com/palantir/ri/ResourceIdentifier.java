@@ -25,8 +25,6 @@ import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.UnsafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 
-import java.util.function.Predicate;
-
 /**
  * Defines a common format for wrapping existing unique identifiers to provide additional context. This class
  * provides utility method: {@code #of(String)} to parse an existing identifier or the ability to generate new
@@ -54,15 +52,14 @@ public final class ResourceIdentifier {
     private static final int RID_PREFIX_LENGTH = 3;
     private static final char SEPARATOR = '.';
 
-    private static final Predicate<Character> IS_VALID_SERVICE_FIRST_CHAR =
-            PrecomputedAsciiPredicate.precompute(ResourceIdentifier::isLowerAlpha);
-    private static final Predicate<Character> IS_VALID_SERVICE_SUBSEQUENT_CHAR =
-            PrecomputedAsciiPredicate.precompute(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
-    private static final Predicate<Character> IS_VALID_INSTANCE_FIRST_CHAR =
-            PrecomputedAsciiPredicate.precompute(ch -> isLowerAlpha(ch) || isDigit(ch));
-    private static final Predicate<Character> IS_VALID_INSTANCE_SUBSEQUENT_CHAR =
-            PrecomputedAsciiPredicate.precompute(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
-    private static final Predicate<Character> IS_VALID_LOCATOR_CHAR = PrecomputedAsciiPredicate.precompute(
+    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR =
+            FastAsciiPredicate.compile(ResourceIdentifier::isLowerAlpha);
+    private static final CharPredicate IS_VALID_SERVICE_SUBSEQUENT_CHAR =
+            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
+    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR =
+            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch));
+    private static final CharPredicate IS_VALID_INSTANCE_SUBSEQUENT_CHAR = IS_VALID_SERVICE_SUBSEQUENT_CHAR;
+    private static final CharPredicate IS_VALID_LOCATOR_CHAR = FastAsciiPredicate.compile(
             ch -> isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDash(ch) || isDot(ch) || isUnderscore(ch));
 
     private static final int INDEX_INVALID = -1;

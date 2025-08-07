@@ -4,25 +4,23 @@
 
 package com.palantir.ri;
 
-import java.util.function.Predicate;
-
-final class PrecomputedAsciiPredicate implements Predicate<Character> {
+final class FastAsciiPredicate implements CharPredicate {
     private final boolean[] mask;
 
-    private PrecomputedAsciiPredicate(boolean[] mask) {
+    private FastAsciiPredicate(boolean[] mask) {
         this.mask = mask;
     }
 
-    static Predicate<Character> precompute(Predicate<Character> predicate) {
+    static CharPredicate compile(CharPredicate predicate) {
         boolean[] mask = new boolean[256];
         for (char ch = 0; ch < 256; ch++) {
             mask[ch] = predicate.test(ch);
         }
-        return new PrecomputedAsciiPredicate(mask);
+        return new FastAsciiPredicate(mask);
     }
 
     @Override
-    public boolean test(Character ch) {
+    public boolean test(char ch) {
         return ch < 256 && mask[ch];
     }
 }
