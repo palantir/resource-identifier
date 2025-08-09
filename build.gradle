@@ -18,7 +18,7 @@ buildscript {
         classpath 'com.palantir.gradle.jdkslatest:gradle-jdks-latest:0.15.0'
         classpath 'com.palantir.jakartapackagealignment:jakarta-package-alignment:0.6.0'
         classpath 'com.palantir.javaformat:gradle-palantir-java-format:2.50.0'
-        classpath 'me.champeau.jmh:jmh-gradle-plugin:0.7.2'
+        classpath 'me.champeau.jmh:jmh-gradle-plugin:0.7.3'
     }
 }
 
@@ -63,9 +63,11 @@ configurations.testCompileClasspath {
     exclude module: 'junit'
 }
 
-jmh {
-    profilers = ['gc']
+tasks.jmhCompileGeneratedClasses {
+    options.annotationProcessorPath = configurations.jmhAnnotationProcessor
+    options.errorprone.enabled = false
 }
+
 
 javaVersions {
     libraryTarget = 17
