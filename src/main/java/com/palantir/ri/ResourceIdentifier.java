@@ -52,6 +52,14 @@ public final class ResourceIdentifier {
     private static final int RID_PREFIX_LENGTH = 3;
     private static final char SEPARATOR = '.';
 
+    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR = ResourceIdentifier::isLowerAlpha;
+    private static final CharPredicate IS_VALID_SERVICE_SUBSEQUENT_CHAR =
+            ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch);
+    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR = ch -> isLowerAlpha(ch) || isDigit(ch);
+    private static final CharPredicate IS_VALID_INSTANCE_SUBSEQUENT_CHAR = IS_VALID_SERVICE_SUBSEQUENT_CHAR;
+    private static final CharPredicate IS_VALID_LOCATOR_CHAR = FastAsciiPredicate.compile(
+            ch -> isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDash(ch) || isDot(ch) || isUnderscore(ch));
+
     private static final int INDEX_INVALID = -1;
     private static final int INDEX_END = -2;
 
@@ -473,12 +481,12 @@ public final class ResourceIdentifier {
         for (int i = start; i < length; i++) {
             char ch = value.charAt(i);
             if (i == start) {
-                if (!isLowerAlpha(ch)) {
+                if (!IS_VALID_SERVICE_FIRST_CHAR.test(ch)) {
                     return INDEX_INVALID;
                 }
             } else if (ch == SEPARATOR) {
                 return i;
-            } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
+            } else if (!IS_VALID_SERVICE_SUBSEQUENT_CHAR.test(ch)) {
                 return INDEX_INVALID;
             }
         }
@@ -502,10 +510,10 @@ public final class ResourceIdentifier {
             if (ch == SEPARATOR) {
                 return i;
             } else if (i == start) {
-                if (!(isLowerAlpha(ch) || isDigit(ch))) {
+                if (!IS_VALID_INSTANCE_FIRST_CHAR.test(ch)) {
                     return INDEX_INVALID;
                 }
-            } else if (!(isLowerAlpha(ch) || isDigit(ch) || isDash(ch))) {
+            } else if (!IS_VALID_INSTANCE_SUBSEQUENT_CHAR.test(ch)) {
                 return INDEX_INVALID;
             }
         }
@@ -530,7 +538,7 @@ public final class ResourceIdentifier {
 
         for (int i = start; i < length; i++) {
             char ch = value.charAt(i);
-            if (!(isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDot(ch) || isDash(ch) || isUnderscore(ch))) {
+            if (!IS_VALID_LOCATOR_CHAR.test(ch)) {
                 return INDEX_INVALID;
             }
         }
