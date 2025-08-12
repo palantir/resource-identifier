@@ -24,6 +24,7 @@ import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.UnsafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines a common format for wrapping existing unique identifiers to provide additional context. This class
@@ -159,7 +160,7 @@ public final class ResourceIdentifier {
         return substringMatches(typeIndex + 1, resourceIdentifier.length(), locator);
     }
 
-    private boolean substringMatches(int beginIndex, int endIndex, String other) {
+    private boolean substringMatches(int beginIndex, int endIndex, @Nullable String other) {
         if (other == null) {
             return false;
         }
@@ -208,10 +209,9 @@ public final class ResourceIdentifier {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof ResourceIdentifier)) {
+        if (!(obj instanceof ResourceIdentifier other)) {
             return false;
         }
-        ResourceIdentifier other = (ResourceIdentifier) obj;
         // Performance note from https://github.com/palantir/resource-identifier/pull/332:
         // We explicitly check hashCode equality first to short circuit via memoized RID String hashCode for
         // any mismatch to avoid comparing full RID strings as RIDs are often the same length with common prefix.
@@ -225,7 +225,7 @@ public final class ResourceIdentifier {
      * @return {@code true} if and only if the input satisfy the resource identifier specification,
      *         {@code false} otherwise.
      */
-    public static boolean isValid(String rid) {
+    public static boolean isValid(@Nullable String rid) {
         if (rid == null) {
             return false;
         }
@@ -250,11 +250,7 @@ public final class ResourceIdentifier {
         }
 
         int locatorIndex = getLocatorIndex(rid, typeIndex + 1);
-        if (locatorIndex != INDEX_END) {
-            return false;
-        }
-
-        return true;
+        return locatorIndex == INDEX_END;
     }
 
     /**
@@ -412,7 +408,8 @@ public final class ResourceIdentifier {
         return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
     }
 
-    private static ResourceIdentifier tryOf(String rid) {
+    @Nullable
+    private static ResourceIdentifier tryOf(@Nullable String rid) {
         if (rid == null) {
             return null;
         }
@@ -468,7 +465,7 @@ public final class ResourceIdentifier {
         }
     }
 
-    private static int getServiceIndex(CharSequence value, int start) {
+    private static int getServiceIndex(@Nullable CharSequence value, int start) {
         if (value == null) {
             return INDEX_INVALID;
         }
@@ -494,8 +491,7 @@ public final class ResourceIdentifier {
         return INDEX_END;
     }
 
-    @SuppressWarnings("CyclomaticComplexity")
-    private static int getInstanceIndex(CharSequence value, int start) {
+    private static int getInstanceIndex(@Nullable CharSequence value, int start) {
         if (value == null) {
             return INDEX_INVALID;
         }
@@ -526,7 +522,7 @@ public final class ResourceIdentifier {
         return getServiceIndex(value, start);
     }
 
-    private static int getLocatorIndex(CharSequence value, int start) {
+    private static int getLocatorIndex(@Nullable CharSequence value, int start) {
         if (value == null) {
             return INDEX_INVALID;
         }

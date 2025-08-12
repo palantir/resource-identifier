@@ -25,6 +25,9 @@ buildscript {
 apply plugin: 'java-library'
 apply plugin: 'com.palantir.baseline'
 apply plugin: 'com.palantir.baseline-java-versions'
+apply plugin: 'com.palantir.baseline-class-uniqueness'
+apply plugin: 'com.palantir.baseline-exact-dependencies'
+apply plugin: 'com.palantir.baseline-null-away'
 apply plugin: 'com.palantir.consistent-versions'
 apply plugin: 'com.palantir.external-publish'
 apply plugin: 'com.palantir.external-publish-jar'
@@ -49,11 +52,17 @@ dependencies {
     implementation 'com.google.errorprone:error_prone_annotations'
     implementation 'com.palantir.safe-logging:safe-logging'
     implementation 'com.palantir.safe-logging:preconditions'
+    implementation 'org.jspecify:jspecify'
 
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
-    testImplementation 'net.jqwik:jqwik'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'com.palantir.safe-logging:preconditions-assertj'
+    testImplementation 'net.jqwik:jqwik-api'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+
+    testRuntimeOnly 'net.jqwik:jqwik'
 
     jmh 'org.openjdk.jmh:jmh-core'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess'
@@ -63,11 +72,22 @@ configurations.testCompileClasspath {
     exclude module: 'junit'
 }
 
+tasks.withType(Test).configureEach {
+    dependencies {
+        testRuntimeOnly 'net.jqwik:jqwik-engine'
+    }
+
+    useJUnitPlatform {
+        includeEngines 'jqwik', 'junit-jupiter'
+    }
+}
+
+tasks.check.dependsOn javadoc, checkImplicitDependencies, checkUnusedDependencies, checkUnusedConstraints
+
 tasks.jmhCompileGeneratedClasses {
     options.annotationProcessorPath = configurations.jmhAnnotationProcessor
     options.errorprone.enabled = false
 }
-
 
 javaVersions {
     libraryTarget = 17
