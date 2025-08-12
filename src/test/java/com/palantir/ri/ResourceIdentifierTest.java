@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +49,17 @@ final class ResourceIdentifierTest {
                 null,
                 "",
                 "badString",
+                "rid.service.instance.type.locator",
+                "ri.",
+                "ri.service",
+                "ri.service.",
+                "ri.service.instance",
+                "ri.service.instance.",
+                "ri.service.instance.type.",
+                "ri.#service.instance.type.locator",
+                "ri.service.#instance.type.locator",
+                "ri.service.instance.#type.locator",
+                "ri.service.instance.type.#locator",
                 "ri.service.CAPLOCK.type.name",
                 "ri.service.instance.-123.name",
                 "ri..instance.type.noService",
@@ -68,21 +80,31 @@ final class ResourceIdentifierTest {
     @MethodSource("badIds")
     void testIsValidBad(String rid) {
         assertThat(ResourceIdentifier.isValid(rid)).isFalse();
-        assertThat(ResourceIdentifier.isValid(null)).isFalse();
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of(rid))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("Illegal resource identifier format")
+                .containsArgs(UnsafeArg.of("rid", rid));
+        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.valueOf(rid))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("Illegal resource identifier format")
+                .containsArgs(UnsafeArg.of("rid", rid));
     }
 
     @Test
     void testIsValidService() {
         assertThat(ResourceIdentifier.isValidService("valid-service-123")).isTrue();
-        boolean validService = ResourceIdentifier.isValidService("invalid.service!");
-        assertThat(validService).isFalse();
+        assertThat(ResourceIdentifier.isValidType("")).isFalse();
+        assertThat(ResourceIdentifier.isValidService("invalid.service!")).isFalse();
         assertThat(ResourceIdentifier.isValidService(null)).isFalse();
     }
 
     @Test
     void testIsValidInstance() {
-        boolean validInstance = ResourceIdentifier.isValidInstance("valid-instance-123");
-        assertThat(validInstance).isTrue();
+        assertThat(ResourceIdentifier.isValidInstance("")).isTrue();
+        assertThat(ResourceIdentifier.isValidInstance("valid-instance-123")).isTrue();
+        assertThat(ResourceIdentifier.isValidInstance(".")).isFalse();
+        assertThat(ResourceIdentifier.isValidInstance("..")).isFalse();
+        assertThat(ResourceIdentifier.isValidInstance("in#valid")).isFalse();
         assertThat(ResourceIdentifier.isValidInstance("invalid.instance!")).isFalse();
         assertThat(ResourceIdentifier.isValidInstance(null)).isFalse();
     }
@@ -90,6 +112,8 @@ final class ResourceIdentifierTest {
     @Test
     void testIsValidType() {
         assertThat(ResourceIdentifier.isValidType("valid-type-123")).isTrue();
+        assertThat(ResourceIdentifier.isValidType("")).isFalse();
+        assertThat(ResourceIdentifier.isValidType("in#valid")).isFalse();
         assertThat(ResourceIdentifier.isValidType("invalid.type!")).isFalse();
         assertThat(ResourceIdentifier.isValidType(null)).isFalse();
     }
@@ -215,40 +239,23 @@ final class ResourceIdentifierTest {
 
     @Test
     void testStringConstructionWithMultipleLocatorComponents() {
-        assertThat(ResourceIdentifier.of("service", "", "type", "name1").toString())
-                .isEqualTo("ri.service..type.name1");
-        assertThat(ResourceIdentifier.of("service", "", "type", "name1", "name2")
-                        .toString())
-                .isEqualTo("ri.service..type.name1.name2");
-        assertThat(ResourceIdentifier.of("service", "", "type", "name1", "name2", "name3")
-                        .toString())
-                .isEqualTo("ri.service..type.name1.name2.name3");
+        assertThat(ResourceIdentifier.of("service", "", "type", "name1")).hasToString("ri.service..type.name1");
+        assertThat(ResourceIdentifier.of("service", "", "type", "name1", "name2"))
+                .hasToString("ri.service..type.name1.name2");
+        assertThat(ResourceIdentifier.of("service", "", "type", "name1", "name2", "name3"))
+                .hasToString("ri.service..type.name1.name2.name3");
     }
 
     @ParameterizedTest
     @MethodSource("goodIds")
-    void testEqualsHashCode(String goodId) {
-        ResourceIdentifier curRid = ResourceIdentifier.of(goodId);
-        ResourceIdentifier curRid2 = ResourceIdentifier.of(goodId);
-        assertThat(curRid).isEqualTo(curRid2).isEqualTo(curRid);
-        assertThat(curRid2).isEqualTo(curRid).isEqualTo(curRid2);
-        assertThat(curRid).isEqualTo(curRid2);
-        assertThat(curRid.toString()).isEqualTo(curRid2.toString());
-        assertThat(curRid.hashCode()).isEqualTo(curRid2.hashCode());
-        assertThat(curRid).isNotEqualTo(NotEqualsObj.INSTANCE);
+    void testEqualsHashCode(String rid) {
+        ResourceIdentifier rid1 = ResourceIdentifier.of(rid);
+        ResourceIdentifier rid2 = ResourceIdentifier.of(rid);
+        assertThat(rid1).isEqualTo(rid2).isEqualTo(rid1);
+        assertThat(rid2).isEqualTo(rid1).isEqualTo(rid2);
+        assertThat(rid1.toString()).isEqualTo(rid2.toString());
+        assertThat(rid1.hashCode()).isEqualTo(rid2.hashCode());
 
-        assertThat(curRid)
-                .hasSameHashCodeAs(curRid2)
-                .isEqualTo(curRid2)
-                .isNotSameAs(curRid2)
-                .hasSameHashCodeAs(ResourceIdentifier.of(
-                        curRid.getService(), curRid.getInstance(), curRid.getType(), curRid.getLocator()));
-
-        assertEqualsAndHashCode(curRid, curRid2);
-        assertNotEqualsAndDifferentHashCode(curRid);
-    }
-
-    static void assertEqualsAndHashCode(ResourceIdentifier rid1, ResourceIdentifier rid2) {
         ResourceIdentifier copy1 =
                 ResourceIdentifier.of(rid1.getService(), rid1.getInstance(), rid1.getType(), rid1.getLocator());
         assertThat(rid1)
@@ -260,7 +267,10 @@ final class ResourceIdentifierTest {
                 .hasToString(rid2.toString());
     }
 
-    static void assertNotEqualsAndDifferentHashCode(ResourceIdentifier rid1) {
+    @ParameterizedTest
+    @MethodSource("goodIds")
+    void testNotEqualsAndDifferentHashCode(String rid) {
+        ResourceIdentifier rid1 = ResourceIdentifier.of(rid);
         ResourceIdentifier copy1 =
                 ResourceIdentifier.of(rid1.getService() + "1", rid1.getInstance(), rid1.getType(), rid1.getLocator());
         ResourceIdentifier copy2 =
@@ -281,7 +291,8 @@ final class ResourceIdentifierTest {
                 .doesNotHaveToString(copy1.toString())
                 .doesNotHaveToString(copy2.toString())
                 .doesNotHaveToString(copy3.toString())
-                .doesNotHaveToString(copy4.toString());
+                .doesNotHaveToString(copy4.toString())
+                .isNotEqualTo(NotEqualsObj.INSTANCE);
     }
 
     private enum NotEqualsObj {

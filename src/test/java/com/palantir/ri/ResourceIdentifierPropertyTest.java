@@ -16,8 +16,11 @@
 
 package com.palantir.ri;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.palantir.logsafe.UnsafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -71,18 +74,48 @@ final class ResourceIdentifierPropertyTest {
     @Chars({'_', '-', '.'})
     @interface Locator {}
 
-    @Property(tries = 5000)
+    @Property(tries = 10_000)
     void testIsValid(
             @ForAll @Service String service,
             @ForAll @Instance String instance,
             @ForAll @Type String type,
             @ForAll @Locator String locator) {
         String string = "ri." + service + "." + instance + "." + type + "." + locator;
-        assertEquals(SPEC_PATTERN.matcher(string).matches(), ResourceIdentifier.isValid(string), string);
-        assertEquals(SERVICE_PATTERN.matcher(service).matches(), ResourceIdentifier.isValidService(service), service);
-        assertEquals(
-                INSTANCE_PATTERN.matcher(instance).matches(), ResourceIdentifier.isValidInstance(instance), instance);
-        assertEquals(TYPE_PATTERN.matcher(type).matches(), ResourceIdentifier.isValidType(type), type);
-        assertEquals(LOCATOR_PATTERN.matcher(locator).matches(), ResourceIdentifier.isValidLocator(locator), locator);
+
+        boolean isValidRid = SPEC_PATTERN.matcher(string).matches();
+        assertThat(ResourceIdentifier.isValid(string)).as(string).isEqualTo(isValidRid);
+        assertThat(ResourceIdentifier.isValidService(service))
+                .as(service)
+                .isEqualTo(SERVICE_PATTERN.matcher(service).matches());
+        assertThat(ResourceIdentifier.isValidInstance(instance))
+                .as(instance)
+                .isEqualTo(INSTANCE_PATTERN.matcher(instance).matches());
+        assertThat(ResourceIdentifier.isValidType(type))
+                .as(type)
+                .isEqualTo(TYPE_PATTERN.matcher(type).matches());
+        assertThat(ResourceIdentifier.isValidLocator(locator))
+                .as(locator)
+                .isEqualTo(LOCATOR_PATTERN.matcher(locator).matches());
+
+        if (isValidRid) {
+            assertThat(ResourceIdentifier.of(string))
+                    .isNotNull()
+                    .isEqualTo(ResourceIdentifier.valueOf(string))
+                    .satisfies(rid -> {
+                        assertThat(rid.getService()).isEqualTo(service);
+                        assertThat(rid.hasService(service)).isTrue();
+                        assertThat(rid.getInstance()).isEqualTo(instance);
+                        assertThat(rid.hasInstance(instance)).isTrue();
+                        assertThat(rid.getType()).isEqualTo(type);
+                        assertThat(rid.hasType(type)).isTrue();
+                        assertThat(rid.getLocator()).isEqualTo(locator);
+                        assertThat(rid.hasLocator(locator)).isTrue();
+                    });
+        } else {
+            assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of(string))
+                    .isInstanceOf(SafeIllegalArgumentException.class)
+                    .hasLogMessage("Illegal resource identifier format")
+                    .containsArgs(UnsafeArg.of("rid", string));
+        }
     }
 }
