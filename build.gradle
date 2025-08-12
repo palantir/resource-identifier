@@ -1,11 +1,7 @@
 buildscript {
     repositories {
-        mavenCentral() {
-            metadataSources { mavenPom(); ignoreGradleMetadataRedirection() }
-        }
-        gradlePluginPortal() {
-            metadataSources { mavenPom(); ignoreGradleMetadataRedirection() }
-        }
+        mavenCentral()
+        gradlePluginPortal()
     }
 
     dependencies {
@@ -43,9 +39,7 @@ group 'com.palantir.ri'
 version gitVersion()
 
 repositories {
-    mavenCentral() {
-        metadataSources { mavenPom(); ignoreGradleMetadataRedirection() }
-    }
+    mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
 }
 
 dependencies {
