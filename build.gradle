@@ -35,6 +35,7 @@ apply plugin: 'com.palantir.failure-reports'
 apply plugin: 'com.palantir.git-version'
 apply plugin: 'com.palantir.jakarta-package-alignment'
 apply plugin: 'com.palantir.java-format'
+apply plugin: 'com.palantir.jdks'
 apply plugin: 'com.palantir.jdks.latest'
 apply plugin: 'me.champeau.jmh'
 
@@ -92,4 +93,8 @@ tasks.jmhCompileGeneratedClasses {
 javaVersions {
     libraryTarget = 17
     runtime = 21
+}
+
+jdks {
+    daemonTarget = 17
 }

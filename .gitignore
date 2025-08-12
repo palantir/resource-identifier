@@ -31,3 +31,6 @@ generated/
 
 # Jqwik
 .jqwik-database
+
+# Gradle JDKs setup
+!gradle/*
