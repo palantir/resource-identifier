@@ -65,10 +65,6 @@ dependencies {
     jmh 'org.openjdk.jmh:jmh-generator-annprocess'
 }
 
-configurations.testCompileClasspath {
-    exclude module: 'junit'
-}
-
 tasks.withType(Test).configureEach {
     dependencies {
         testRuntimeOnly 'net.jqwik:jqwik-engine'
@@ -79,7 +75,7 @@ tasks.withType(Test).configureEach {
     }
 }
 
-tasks.named('check') { dependsOn 'javadoc', 'checkImplicitDependencies', 'checkUnusedDependencies' }, checkUnusedConstraints
+tasks.named('check') { dependsOn 'javadoc', 'checkImplicitDependencies', 'checkUnusedDependencies', 'checkUnusedConstraints' }
 
 tasks.jmhCompileGeneratedClasses {
     options.annotationProcessorPath = configurations.jmhAnnotationProcessor
