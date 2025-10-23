@@ -16,7 +16,6 @@ buildscript {
         classpath 'com.palantir.jakartapackagealignment:jakarta-package-alignment:0.6.0'
         classpath 'com.palantir.javaformat:gradle-palantir-java-format:2.81.0'
         classpath 'com.palantir.suppressible-error-prone:gradle-suppressible-error-prone:2.23.0'
-        classpath 'me.champeau.jmh:jmh-gradle-plugin:0.7.3'
     }
 }
 
@@ -35,13 +34,16 @@ apply plugin: 'com.palantir.jakarta-package-alignment'
 apply plugin: 'com.palantir.java-format'
 apply plugin: 'com.palantir.jdks'
 apply plugin: 'com.palantir.jdks.latest'
-apply plugin: 'me.champeau.jmh'
 
 group 'com.palantir.ri'
 version gitVersion()
 
 repositories {
     mavenCentral() { metadataSources { mavenPom(); ignoreGradleMetadataRedirection() } }
+}
+
+sourceSets {
+    jmh
 }
 
 dependencies {
@@ -59,28 +61,24 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
 
-    testRuntimeOnly 'net.jqwik:jqwik'
+    testRuntimeOnly 'net.jqwik:jqwik-engine'
 
-    jmh 'org.openjdk.jmh:jmh-core'
-    jmh 'org.openjdk.jmh:jmh-generator-annprocess'
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
+
+    jmhImplementation project(':')
+    jmhImplementation 'org.openjdk.jmh:jmh-core'
 }
 
-tasks.withType(Test).configureEach {
-    dependencies {
-        testRuntimeOnly 'net.jqwik:jqwik-engine'
+tasks.register('benchmark', JavaExec) {
+    classpath = sourceSets.jmh.runtimeClasspath
+    mainClass = 'org.openjdk.jmh.Main'
+
+    if (project.hasProperty('jmh')) {
+        args(project.property('jmh').split(' '))
     }
-
-    useJUnitPlatform {
-        includeEngines 'jqwik', 'junit-jupiter'
-    }
 }
 
-tasks.named('check') { dependsOn 'javadoc', 'checkImplicitDependencies', 'checkUnusedDependencies', 'checkUnusedConstraints' }
-
-tasks.jmhCompileGeneratedClasses {
-    options.annotationProcessorPath = configurations.jmhAnnotationProcessor
-    options.errorprone.enabled = false
-}
+tasks.named('check') { dependsOn 'javadoc', 'checkUnusedDependencies', 'checkImplicitDependencies' }
 
 javaVersions {
     libraryTarget = 17

@@ -20,28 +20,21 @@ import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Threads;
-import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.TimeValue;
 
 @State(Scope.Benchmark)
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
-@Warmup(iterations = 3, time = 3, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 3, time = 3, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
-@Threads(4)
-@SuppressWarnings({"checkstyle:hideutilityclassconstructor", "VisibilityModifier", "DesignForExtension", "NullAway"})
+@Threads(1)
+@SuppressWarnings({"DesignForExtension", "NullAway", "VisibilityModifier"})
 public class ResourceIdentifierBenchmark {
 
     public enum Input {
@@ -67,11 +60,15 @@ public class ResourceIdentifierBenchmark {
     Input input;
 
     @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public ResourceIdentifier fromString() {
         return ResourceIdentifier.of(input.string);
     }
 
     @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public ResourceIdentifier fromComponents() {
         return ResourceIdentifier.of(input.service, input.instance, input.type, input.locator);
     }
@@ -80,12 +77,6 @@ public class ResourceIdentifierBenchmark {
         Options opt = new OptionsBuilder()
                 .include(ResourceIdentifierBenchmark.class.getSimpleName())
                 .addProfiler(GCProfiler.class)
-                .forks(1)
-                .threads(4)
-                .warmupIterations(3)
-                .warmupTime(TimeValue.seconds(3))
-                .measurementIterations(4)
-                .measurementTime(TimeValue.seconds(3))
                 .build();
         new Runner(opt).run();
     }
