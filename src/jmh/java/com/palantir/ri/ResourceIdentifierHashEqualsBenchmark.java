@@ -28,7 +28,6 @@ import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.TimeValue;
 
 @Fork(1)
 @Threads(1)
@@ -61,12 +60,6 @@ public class ResourceIdentifierHashEqualsBenchmark {
         Options opt = new OptionsBuilder()
                 .include(ResourceIdentifierHashEqualsBenchmark.class.getSimpleName())
                 .addProfiler(GCProfiler.class)
-                .forks(1)
-                .threads(4)
-                .warmupIterations(3)
-                .warmupTime(TimeValue.seconds(3))
-                .measurementIterations(4)
-                .measurementTime(TimeValue.seconds(3))
                 .build();
         new Runner(opt).run();
     }
