@@ -81,6 +81,7 @@ tasks.register('benchmark', JavaExec) {
 tasks.named('check') { dependsOn 'javadoc', 'checkUnusedDependencies', 'checkImplicitDependencies' }
 
 javaVersions {
+    javaCompiler = 25
     libraryTarget = 17
     runtime = 25
 }
