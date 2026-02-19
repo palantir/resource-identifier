@@ -4,11 +4,11 @@ com.fasterxml.jackson.core:jackson-annotations:2.21 (2 constraints: ff166824)
 
 com.google.errorprone:error_prone_annotations:2.36.0 (2 constraints: 4016c1f6)
 
-com.palantir.safe-logging:preconditions:3.11.0 (2 constraints: 9019b4dd)
+com.palantir.safe-logging:preconditions:3.12.0 (2 constraints: 9219f3dd)
 
-com.palantir.safe-logging:safe-logging:3.11.0 (3 constraints: c02a6e82)
+com.palantir.safe-logging:safe-logging:3.12.0 (3 constraints: c32a1a83)
 
-org.jetbrains:annotations:26.0.2 (1 constraints: 36116fd1)
+org.jetbrains:annotations:26.1.0 (1 constraints: 351170d1)
 
 org.jspecify:jspecify:1.0.0 (7 constraints: 436b883e)
 
@@ -20,9 +20,9 @@ com.fasterxml.jackson.core:jackson-core:2.21.0 (1 constraints: 85123321)
 
 com.fasterxml.jackson.core:jackson-databind:2.21.0 (1 constraints: 3705363b)
 
-com.palantir.safe-logging:preconditions-assertj:3.11.0 (1 constraints: 3705383b)
+com.palantir.safe-logging:preconditions-assertj:3.12.0 (1 constraints: 38053b3b)
 
-net.bytebuddy:byte-buddy:1.17.7 (1 constraints: 560b56df)
+net.bytebuddy:byte-buddy:1.18.3 (1 constraints: 530b55df)
 
 net.jqwik:jqwik-api:1.9.3 (2 constraints: 510f458b)
 
@@ -34,7 +34,7 @@ org.apache.commons:commons-math3:3.6.1 (1 constraints: bf0adbcc)
 
 org.apiguardian:apiguardian-api:1.1.2 (8 constraints: 89798c70)
 
-org.assertj:assertj-core:3.27.6 (1 constraints: 67148379)
+org.assertj:assertj-core:3.27.7 (1 constraints: 68148479)
 
 org.junit.jupiter:junit-jupiter:6.0.3 (1 constraints: 4a070d70)
 
