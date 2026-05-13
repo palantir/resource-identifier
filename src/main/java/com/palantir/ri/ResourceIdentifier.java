@@ -53,10 +53,12 @@ public final class ResourceIdentifier {
     private static final int RID_PREFIX_LENGTH = 3;
     private static final char SEPARATOR = '.';
 
-    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR = ResourceIdentifier::isLowerAlpha;
+    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR =
+            FastAsciiPredicate.compile(ResourceIdentifier::isLowerAlpha);
     private static final CharPredicate IS_VALID_SERVICE_SUBSEQUENT_CHAR =
-            ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch);
-    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR = ch -> isLowerAlpha(ch) || isDigit(ch);
+            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
+    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR =
+            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch));
     private static final CharPredicate IS_VALID_INSTANCE_SUBSEQUENT_CHAR = IS_VALID_SERVICE_SUBSEQUENT_CHAR;
     private static final CharPredicate IS_VALID_LOCATOR_CHAR = FastAsciiPredicate.compile(
             ch -> isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDash(ch) || isDot(ch) || isUnderscore(ch));
@@ -356,7 +358,18 @@ public final class ResourceIdentifier {
      */
     public static ResourceIdentifier of(
             @Safe String service, @Safe String instance, @Safe String type, String locator) {
-        return of((CharSequence) service, instance, type, locator);
+        checkServiceIsValid(service);
+        checkInstanceIsValid(instance);
+        checkTypeIsValid(type);
+        checkLocatorIsValid(locator);
+
+        String resourceIdentifier =
+                RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
+
+        int serviceIndex = RID_PREFIX_LENGTH + service.length();
+        int instanceIndex = serviceIndex + 1 + instance.length();
+        int typeIndex = instanceIndex + 1 + type.length();
+        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
     }
 
     /**
@@ -389,23 +402,7 @@ public final class ResourceIdentifier {
             locator.append(SEPARATOR).append(component);
         }
 
-        return of(service, instance, type, locator);
-    }
-
-    private static ResourceIdentifier of(
-            @Safe CharSequence service, @Safe CharSequence instance, @Safe CharSequence type, CharSequence locator) {
-        checkServiceIsValid(service);
-        checkInstanceIsValid(instance);
-        checkTypeIsValid(type);
-        checkLocatorIsValid(locator);
-
-        String resourceIdentifier =
-                RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
-
-        int serviceIndex = RID_PREFIX_LENGTH + service.length();
-        int instanceIndex = serviceIndex + 1 + instance.length();
-        int typeIndex = instanceIndex + 1 + type.length();
-        return new ResourceIdentifier(resourceIdentifier, serviceIndex, instanceIndex, typeIndex);
+        return of(service, instance, type, locator.toString());
     }
 
     @Nullable
@@ -475,13 +472,13 @@ public final class ResourceIdentifier {
             return INDEX_INVALID;
         }
 
-        for (int i = start; i < length; i++) {
+        if (!IS_VALID_SERVICE_FIRST_CHAR.test(value.charAt(start))) {
+            return INDEX_INVALID;
+        }
+
+        for (int i = start + 1; i < length; i++) {
             char ch = value.charAt(i);
-            if (i == start) {
-                if (!IS_VALID_SERVICE_FIRST_CHAR.test(ch)) {
-                    return INDEX_INVALID;
-                }
-            } else if (ch == SEPARATOR) {
+            if (ch == SEPARATOR) {
                 return i;
             } else if (!IS_VALID_SERVICE_SUBSEQUENT_CHAR.test(ch)) {
                 return INDEX_INVALID;
@@ -500,15 +497,22 @@ public final class ResourceIdentifier {
         if (start > length) {
             return INDEX_INVALID;
         }
+        if (start == length) {
+            return INDEX_END;
+        }
 
-        for (int i = start; i < length; i++) {
+        char firstChar = value.charAt(start);
+        if (firstChar == SEPARATOR) {
+            return start;
+        }
+        if (!IS_VALID_INSTANCE_FIRST_CHAR.test(firstChar)) {
+            return INDEX_INVALID;
+        }
+
+        for (int i = start + 1; i < length; i++) {
             char ch = value.charAt(i);
             if (ch == SEPARATOR) {
                 return i;
-            } else if (i == start) {
-                if (!IS_VALID_INSTANCE_FIRST_CHAR.test(ch)) {
-                    return INDEX_INVALID;
-                }
             } else if (!IS_VALID_INSTANCE_SUBSEQUENT_CHAR.test(ch)) {
                 return INDEX_INVALID;
             }
