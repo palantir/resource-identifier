@@ -30,11 +30,11 @@ final class AsciiPredicate {
     }
 
     static AsciiPredicate compile(CharPredicate predicate) {
-        boolean[] mask = new boolean[TABLE_SIZE];
+        boolean[] truthTable = new boolean[TABLE_SIZE];
         for (char ch = 0; ch < TABLE_SIZE; ch++) {
-            mask[ch] = predicate.test(ch);
+            truthTable[ch] = predicate.test(ch);
         }
-        return new AsciiPredicate(mask);
+        return new AsciiPredicate(truthTable);
     }
 
     boolean test(char ch) {

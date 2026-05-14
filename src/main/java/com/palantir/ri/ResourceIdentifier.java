@@ -356,8 +356,6 @@ public final class ResourceIdentifier {
      *
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
-    // String parameters are important: JDK 17+ StringConcatFactory optimizes String concatenation
-    // but widens to the slow path when any operand is CharSequence.
     public static ResourceIdentifier of(
             @Safe String service, @Safe String instance, @Safe String type, String locator) {
         checkServiceIsValid(service);
@@ -365,6 +363,8 @@ public final class ResourceIdentifier {
         checkTypeIsValid(type);
         checkLocatorIsValid(locator);
 
+        // String parameters are important: JDK 17+ StringConcatFactory optimizes String concatenation
+        // but widens to the slow path when any operand is CharSequence.
         String resourceIdentifier =
                 RID_PREFIX + service + SEPARATOR + instance + SEPARATOR + type + SEPARATOR + locator;
 
