@@ -53,14 +53,14 @@ public final class ResourceIdentifier {
     private static final int RID_PREFIX_LENGTH = 3;
     private static final char SEPARATOR = '.';
 
-    private static final CharPredicate IS_VALID_SERVICE_FIRST_CHAR =
-            FastAsciiPredicate.compile(ResourceIdentifier::isLowerAlpha);
-    private static final CharPredicate IS_VALID_SERVICE_SUBSEQUENT_CHAR =
-            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
-    private static final CharPredicate IS_VALID_INSTANCE_FIRST_CHAR =
-            FastAsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch));
-    private static final CharPredicate IS_VALID_INSTANCE_SUBSEQUENT_CHAR = IS_VALID_SERVICE_SUBSEQUENT_CHAR;
-    private static final CharPredicate IS_VALID_LOCATOR_CHAR = FastAsciiPredicate.compile(
+    private static final AsciiPredicate IS_VALID_SERVICE_FIRST_CHAR =
+            AsciiPredicate.compile(ResourceIdentifier::isLowerAlpha);
+    private static final AsciiPredicate IS_VALID_SERVICE_SUBSEQUENT_CHAR =
+            AsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch) || isDash(ch));
+    private static final AsciiPredicate IS_VALID_INSTANCE_FIRST_CHAR =
+            AsciiPredicate.compile(ch -> isLowerAlpha(ch) || isDigit(ch));
+    private static final AsciiPredicate IS_VALID_INSTANCE_SUBSEQUENT_CHAR = IS_VALID_SERVICE_SUBSEQUENT_CHAR;
+    private static final AsciiPredicate IS_VALID_LOCATOR_CHAR = AsciiPredicate.compile(
             ch -> isLowerAlpha(ch) || isUpperAlpha(ch) || isDigit(ch) || isDash(ch) || isDot(ch) || isUnderscore(ch));
 
     private static final int INDEX_INVALID = -1;
@@ -356,6 +356,8 @@ public final class ResourceIdentifier {
      *
      * @throws IllegalArgumentException if any of the inputs do not satisfy the resource identifier specification
      */
+    // String parameters are important: JDK 17+ StringConcatFactory optimizes String concatenation
+    // but widens to the slow path when any operand is CharSequence.
     public static ResourceIdentifier of(
             @Safe String service, @Safe String instance, @Safe String type, String locator) {
         checkServiceIsValid(service);
@@ -472,7 +474,8 @@ public final class ResourceIdentifier {
             return INDEX_INVALID;
         }
 
-        if (!IS_VALID_SERVICE_FIRST_CHAR.test(value.charAt(start))) {
+        char firstChar = value.charAt(start);
+        if (!IS_VALID_SERVICE_FIRST_CHAR.test(firstChar)) {
             return INDEX_INVALID;
         }
 
@@ -494,18 +497,16 @@ public final class ResourceIdentifier {
         }
 
         int length = value.length();
-        if (start > length) {
-            return INDEX_INVALID;
-        }
         if (start == length) {
             return INDEX_END;
+        } else if (start > length) {
+            return INDEX_INVALID;
         }
 
         char firstChar = value.charAt(start);
         if (firstChar == SEPARATOR) {
             return start;
-        }
-        if (!IS_VALID_INSTANCE_FIRST_CHAR.test(firstChar)) {
+        } else if (!IS_VALID_INSTANCE_FIRST_CHAR.test(firstChar)) {
             return INDEX_INVALID;
         }
 
