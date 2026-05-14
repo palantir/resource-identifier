@@ -16,6 +16,28 @@
 
 package com.palantir.ri;
 
-public interface CharPredicate {
-    boolean test(char ch);
+final class AsciiPredicate {
+    private static final int TABLE_SIZE = 256;
+
+    private final boolean[] truthTable;
+
+    private AsciiPredicate(boolean[] truthTable) {
+        this.truthTable = truthTable;
+    }
+
+    interface CharPredicate {
+        boolean test(char ch);
+    }
+
+    static AsciiPredicate compile(CharPredicate predicate) {
+        boolean[] truthTable = new boolean[TABLE_SIZE];
+        for (char ch = 0; ch < TABLE_SIZE; ch++) {
+            truthTable[ch] = predicate.test(ch);
+        }
+        return new AsciiPredicate(truthTable);
+    }
+
+    boolean test(char ch) {
+        return ch < TABLE_SIZE && truthTable[ch];
+    }
 }
