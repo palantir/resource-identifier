@@ -4,9 +4,9 @@ com.fasterxml.jackson.core:jackson-annotations:2.21 (2 constraints: ff166824)
 
 com.google.errorprone:error_prone_annotations:2.36.0 (2 constraints: 4016c1f6)
 
-com.palantir.safe-logging:preconditions:3.14.0 (2 constraints: 961971de)
+com.palantir.safe-logging:preconditions:3.15.0 (2 constraints: 9819b0de)
 
-com.palantir.safe-logging:safe-logging:3.14.0 (3 constraints: c92a7284)
+com.palantir.safe-logging:safe-logging:3.15.0 (3 constraints: cc2a1e85)
 
 org.jetbrains:annotations:26.1.0 (1 constraints: 351170d1)
 
@@ -20,7 +20,7 @@ com.fasterxml.jackson.core:jackson-core:2.21.1 (1 constraints: 86123421)
 
 com.fasterxml.jackson.core:jackson-databind:2.21.1 (1 constraints: 3805373b)
 
-com.palantir.safe-logging:preconditions-assertj:3.14.0 (1 constraints: 3a05413b)
+com.palantir.safe-logging:preconditions-assertj:3.15.0 (1 constraints: 3b05443b)
 
 net.bytebuddy:byte-buddy:1.18.3 (1 constraints: 530b55df)
 
