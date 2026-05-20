@@ -45,7 +45,9 @@ repositories {
 }
 
 sourceSets {
-    jmh
+    jmh {
+        java {}
+    }
 }
 
 dependencies {
