@@ -24,9 +24,9 @@ com.palantir.safe-logging:preconditions-assertj:3.15.0 (1 constraints: 3b05443b)
 
 net.bytebuddy:byte-buddy:1.18.3 (1 constraints: 530b55df)
 
-net.jqwik:jqwik-api:1.10.0 (2 constraints: 9b0f5da4)
+net.jqwik:jqwik-api:1.10.1 (2 constraints: 9d0f7fa4)
 
-net.jqwik:jqwik-engine:1.10.0 (1 constraints: 3405293b)
+net.jqwik:jqwik-engine:1.10.1 (1 constraints: 35052a3b)
 
 net.sf.jopt-simple:jopt-simple:5.0.4 (1 constraints: be0ad6cc)
 
