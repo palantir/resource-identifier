@@ -18,18 +18,15 @@ package com.palantir.ri;
 
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.quicktheories.QuickTheory.qt;
+import static org.quicktheories.generators.SourceDSL.lists;
 
 import com.palantir.logsafe.UnsafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.regex.Pattern;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
-import net.jqwik.api.constraints.CharRange;
-import net.jqwik.api.constraints.Chars;
+import org.junit.jupiter.api.Test;
+import org.quicktheories.core.Gen;
+import org.quicktheories.generators.Generate;
 
 final class ResourceIdentifierPropertyTest {
 
@@ -45,77 +42,66 @@ final class ResourceIdentifierPropertyTest {
     private static final Pattern SPEC_PATTERN = Pattern.compile(
             "ri\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
-    @Target(ElementType.PARAMETER)
-    @Retention(RetentionPolicy.RUNTIME)
-    @CharRange(from = 'a', to = 'z')
-    @CharRange(from = '0', to = '9')
-    @Chars('-')
-    @interface Service {}
+    private static final String LOWER_ALPHA_NUMERIC_DASH_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+    private static final String LOCATOR_VALID_CHARS =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.";
 
-    @Target(ElementType.PARAMETER)
-    @Retention(RetentionPolicy.RUNTIME)
-    @CharRange(from = 'a', to = 'z')
-    @CharRange(from = '0', to = '9')
-    @Chars('-')
-    @interface Instance {}
+    @Test
+    void testIsValid() {
+        qt().withExamples(1_000_000)
+                .forAll(
+                        stringGen(LOWER_ALPHA_NUMERIC_DASH_CHARS),
+                        stringGen(LOWER_ALPHA_NUMERIC_DASH_CHARS),
+                        stringGen(LOWER_ALPHA_NUMERIC_DASH_CHARS),
+                        stringGen(LOCATOR_VALID_CHARS))
+                .checkAssert((service, instance, type, locator) -> {
+                    String string = "ri." + service + "." + instance + "." + type + "." + locator;
 
-    @Target(ElementType.PARAMETER)
-    @Retention(RetentionPolicy.RUNTIME)
-    @CharRange(from = 'a', to = 'z')
-    @CharRange(from = '0', to = '9')
-    @Chars('-')
-    @interface Type {}
+                    boolean isValidRid = SPEC_PATTERN.matcher(string).matches();
+                    assertThat(ResourceIdentifier.isValid(string)).as(string).isEqualTo(isValidRid);
+                    assertThat(ResourceIdentifier.isValidService(service))
+                            .as(service)
+                            .isEqualTo(SERVICE_PATTERN.matcher(service).matches());
+                    assertThat(ResourceIdentifier.isValidInstance(instance))
+                            .as(instance)
+                            .isEqualTo(INSTANCE_PATTERN.matcher(instance).matches());
+                    assertThat(ResourceIdentifier.isValidType(type))
+                            .as(type)
+                            .isEqualTo(TYPE_PATTERN.matcher(type).matches());
+                    assertThat(ResourceIdentifier.isValidLocator(locator))
+                            .as(locator)
+                            .isEqualTo(LOCATOR_PATTERN.matcher(locator).matches());
 
-    @Target(ElementType.PARAMETER)
-    @Retention(RetentionPolicy.RUNTIME)
-    @CharRange(from = 'a', to = 'z')
-    @CharRange(from = 'A', to = 'Z')
-    @CharRange(from = '0', to = '9')
-    @Chars({'_', '-', '.'})
-    @interface Locator {}
+                    if (isValidRid) {
+                        assertThat(ResourceIdentifier.of(string))
+                                .isNotNull()
+                                .isEqualTo(ResourceIdentifier.valueOf(string))
+                                .satisfies(rid -> {
+                                    assertThat(rid.getService()).isEqualTo(service);
+                                    assertThat(rid.hasService(service)).isTrue();
+                                    assertThat(rid.getInstance()).isEqualTo(instance);
+                                    assertThat(rid.hasInstance(instance)).isTrue();
+                                    assertThat(rid.getType()).isEqualTo(type);
+                                    assertThat(rid.hasType(type)).isTrue();
+                                    assertThat(rid.getLocator()).isEqualTo(locator);
+                                    assertThat(rid.hasLocator(locator)).isTrue();
+                                });
+                    } else {
+                        assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of(string))
+                                .isInstanceOf(SafeIllegalArgumentException.class)
+                                .hasLogMessage("Illegal resource identifier format")
+                                .containsArgs(UnsafeArg.of("rid", string));
+                    }
+                });
+    }
 
-    @Property(tries = 10_000)
-    void testIsValid(
-            @ForAll @Service String service,
-            @ForAll @Instance String instance,
-            @ForAll @Type String type,
-            @ForAll @Locator String locator) {
-        String string = "ri." + service + "." + instance + "." + type + "." + locator;
-
-        boolean isValidRid = SPEC_PATTERN.matcher(string).matches();
-        assertThat(ResourceIdentifier.isValid(string)).as(string).isEqualTo(isValidRid);
-        assertThat(ResourceIdentifier.isValidService(service))
-                .as(service)
-                .isEqualTo(SERVICE_PATTERN.matcher(service).matches());
-        assertThat(ResourceIdentifier.isValidInstance(instance))
-                .as(instance)
-                .isEqualTo(INSTANCE_PATTERN.matcher(instance).matches());
-        assertThat(ResourceIdentifier.isValidType(type))
-                .as(type)
-                .isEqualTo(TYPE_PATTERN.matcher(type).matches());
-        assertThat(ResourceIdentifier.isValidLocator(locator))
-                .as(locator)
-                .isEqualTo(LOCATOR_PATTERN.matcher(locator).matches());
-
-        if (isValidRid) {
-            assertThat(ResourceIdentifier.of(string))
-                    .isNotNull()
-                    .isEqualTo(ResourceIdentifier.valueOf(string))
-                    .satisfies(rid -> {
-                        assertThat(rid.getService()).isEqualTo(service);
-                        assertThat(rid.hasService(service)).isTrue();
-                        assertThat(rid.getInstance()).isEqualTo(instance);
-                        assertThat(rid.hasInstance(instance)).isTrue();
-                        assertThat(rid.getType()).isEqualTo(type);
-                        assertThat(rid.hasType(type)).isTrue();
-                        assertThat(rid.getLocator()).isEqualTo(locator);
-                        assertThat(rid.hasLocator(locator)).isTrue();
-                    });
-        } else {
-            assertThatLoggableExceptionThrownBy(() -> ResourceIdentifier.of(string))
-                    .isInstanceOf(SafeIllegalArgumentException.class)
-                    .hasLogMessage("Illegal resource identifier format")
-                    .containsArgs(UnsafeArg.of("rid", string));
-        }
+    private static Gen<String> stringGen(String chars) {
+        Gen<Character> characterGen =
+                Generate.pick(chars.chars().mapToObj(c -> (char) c).toList());
+        return lists().of(characterGen).ofSizeBetween(0, 20).map(ch -> {
+            StringBuilder sb = new StringBuilder(ch.size());
+            ch.forEach(sb::append);
+            return sb.toString();
+        });
     }
 }
