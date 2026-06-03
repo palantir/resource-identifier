@@ -42,18 +42,20 @@ final class ResourceIdentifierPropertyTest {
     private static final Pattern SPEC_PATTERN = Pattern.compile(
             "ri\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
-    private static final String LOWER_ALPHA_NUMERIC_DASH_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
-    private static final String LOCATOR_VALID_CHARS =
+    private static final String VALID_SERVICE_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+    private static final String VALID_INSTANCE_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+    private static final String VALID_TYPE_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+    private static final String VALID_LOCATOR_CHARS =
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.";
 
     @Test
     void testIsValid() {
         qt().withExamples(1_000_000)
                 .forAll(
-                        stringGen(LOWER_ALPHA_NUMERIC_DASH_CHARS),
-                        stringGen(LOWER_ALPHA_NUMERIC_DASH_CHARS),
-                        stringGen(LOWER_ALPHA_NUMERIC_DASH_CHARS),
-                        stringGen(LOCATOR_VALID_CHARS))
+                        stringGen(VALID_SERVICE_CHARS),
+                        stringGen(VALID_INSTANCE_CHARS),
+                        stringGen(VALID_TYPE_CHARS),
+                        stringGen(VALID_LOCATOR_CHARS))
                 .checkAssert((service, instance, type, locator) -> {
                     String string = "ri." + service + "." + instance + "." + type + "." + locator;
 
