@@ -5,5 +5,5 @@ com.palantir.safe-logging:* = 3.16.0
 org.quicktheories:* = 0.26
 org.jspecify:* = 1.0.0
 org.junit.jupiter:* = 6.1.1
-org.junit.platform:* = 6.1.0
+org.junit.platform:* = 6.1.1
 org.openjdk.jmh:* = 1.37
