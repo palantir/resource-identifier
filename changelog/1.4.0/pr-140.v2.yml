@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: Validating ResourceIdentifier components no longer allocates.
-  links:
-  - https://github.com/palantir/resource-identifier/pull/140
