@@ -1,6 +1,0 @@
-type: improvement
-improvement:
-  description: Speed up ResourceIdentifier creation and validation by precomputing
-    ascii predicates
-  links:
-  - https://github.com/palantir/resource-identifier/pull/606

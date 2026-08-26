@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: ResourceIdentifier exceptions are SafeLoggable for better, safer observability
-  links:
-  - https://github.com/palantir/resource-identifier/pull/594
