@@ -32,7 +32,7 @@ org.apiguardian:apiguardian-api:1.1.2 (6 constraints: 5366ce6e)
 
 org.assertj:assertj-core:3.27.7 (1 constraints: 68148479)
 
-org.junit.jupiter:junit-jupiter:6.1.3 (1 constraints: 4b071170)
+org.junit.jupiter:junit-jupiter:6.1.3 (1 constraints: 76070f77)
 
 org.junit.jupiter:junit-jupiter-api:6.1.3 (4 constraints: 723487b4)
 
