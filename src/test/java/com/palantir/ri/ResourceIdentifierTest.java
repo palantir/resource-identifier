@@ -261,7 +261,9 @@ final class ResourceIdentifierTest {
         assertThat(rid1)
                 .hasSameHashCodeAs(rid2)
                 .isEqualTo(rid2)
+                .isEqualByComparingTo(rid2)
                 .isEqualTo(copy1)
+                .isEqualByComparingTo(copy1)
                 .hasSameHashCodeAs(copy1)
                 .hasToString(rid1.toString())
                 .hasToString(rid2.toString());
@@ -281,9 +283,13 @@ final class ResourceIdentifierTest {
                 ResourceIdentifier.of(rid1.getService(), rid1.getInstance(), rid1.getType(), rid1.getLocator() + "1");
         assertThat(rid1)
                 .isNotEqualTo(copy1)
+                .isLessThan(copy1)
                 .isNotEqualTo(copy2)
+                .isLessThan(copy2)
                 .isNotEqualTo(copy3)
+                .isLessThan(copy3)
                 .isNotEqualTo(copy4)
+                .isNotEqualTo(copy3)
                 .doesNotHaveSameHashCodeAs(copy1)
                 .doesNotHaveSameHashCodeAs(copy2)
                 .doesNotHaveSameHashCodeAs(copy3)
@@ -292,10 +298,6 @@ final class ResourceIdentifierTest {
                 .doesNotHaveToString(copy2.toString())
                 .doesNotHaveToString(copy3.toString())
                 .doesNotHaveToString(copy4.toString())
-                .isNotEqualTo(NotEqualsObj.INSTANCE);
-    }
-
-    private enum NotEqualsObj {
-        INSTANCE
+                .isNotEqualTo(new Object());
     }
 }

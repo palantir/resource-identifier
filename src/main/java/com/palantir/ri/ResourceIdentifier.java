@@ -47,7 +47,7 @@ import org.jspecify.annotations.Nullable;
  * </ol>
  */
 @Immutable
-public final class ResourceIdentifier {
+public final class ResourceIdentifier implements Comparable<ResourceIdentifier> {
 
     private static final String RID_PREFIX = "ri.";
     private static final int RID_PREFIX_LENGTH = 3;
@@ -569,5 +569,10 @@ public final class ResourceIdentifier {
 
     private static boolean isUnderscore(char ch) {
         return ch == '_';
+    }
+
+    @Override
+    public int compareTo(ResourceIdentifier other) {
+        return resourceIdentifier.compareTo(other.resourceIdentifier);
     }
 }
