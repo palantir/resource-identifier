@@ -289,7 +289,7 @@ final class ResourceIdentifierTest {
                 .isNotEqualTo(copy3)
                 .isLessThan(copy3)
                 .isNotEqualTo(copy4)
-                .isNotEqualTo(copy3)
+                .isNotEqualTo(copy4)
                 .doesNotHaveSameHashCodeAs(copy1)
                 .doesNotHaveSameHashCodeAs(copy2)
                 .doesNotHaveSameHashCodeAs(copy3)
