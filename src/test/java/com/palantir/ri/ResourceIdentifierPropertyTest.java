@@ -39,12 +39,20 @@ final class ResourceIdentifierPropertyTest {
     private static final Pattern INSTANCE_PATTERN = Pattern.compile(INSTANCE_REGEX);
     private static final Pattern TYPE_PATTERN = Pattern.compile(TYPE_REGEX);
     private static final Pattern LOCATOR_PATTERN = Pattern.compile(LOCATOR_REGEX);
-    private static final Pattern SPEC_PATTERN = Pattern.compile(
+    private static final Pattern RID_PATTERN = Pattern.compile(
             "ri\\." + SERVICE_REGEX + "\\." + INSTANCE_REGEX + "\\." + TYPE_REGEX + "\\." + LOCATOR_REGEX);
 
+    private static final String VALID_SERVICE_START_CHARS = "abcdefghijklmnopqrstuvwxyz";
     private static final String VALID_SERVICE_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+
+    private static final String VALID_INSTANCE_START_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final String VALID_INSTANCE_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+
+    private static final String VALID_TYPE_START_CHARS = "abcdefghijklmnopqrstuvwxyz";
     private static final String VALID_TYPE_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789-";
+
+    private static final String VALID_LOCATOR_START_CHARS =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.";
     private static final String VALID_LOCATOR_CHARS =
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.";
 
@@ -59,7 +67,7 @@ final class ResourceIdentifierPropertyTest {
                 .checkAssert((service, instance, type, locator) -> {
                     String string = "ri." + service + "." + instance + "." + type + "." + locator;
 
-                    boolean isValidRid = SPEC_PATTERN.matcher(string).matches();
+                    boolean isValidRid = RID_PATTERN.matcher(string).matches();
                     assertThat(ResourceIdentifier.isValid(string)).as(string).isEqualTo(isValidRid);
                     assertThat(ResourceIdentifier.isValidService(service))
                             .as(service)
@@ -97,13 +105,47 @@ final class ResourceIdentifierPropertyTest {
                 });
     }
 
-    private static Gen<String> stringGen(String chars) {
-        Gen<Character> characterGen =
-                Generate.pick(chars.chars().mapToObj(c -> (char) c).toList());
-        return lists().of(characterGen).ofSizeBetween(0, 20).map(ch -> {
-            StringBuilder sb = new StringBuilder(ch.size());
-            ch.forEach(sb::append);
-            return sb.toString();
+    @Test
+    void testCompareTo() {
+        qt().withExamples(1_000_000).forAll(ridGen(), ridGen()).checkAssert((rid1, rid2) -> {
+            assertThat(Integer.signum(rid1.compareTo(rid2)))
+                    .isEqualTo(Integer.signum(rid1.toString().compareTo(rid2.toString())));
         });
+    }
+
+    private static Gen<ResourceIdentifier> ridGen() {
+        return serviceGen().zip(instanceGen(), typeGen(), locatorGen(), ResourceIdentifier::of);
+    }
+
+    private static Gen<String> serviceGen() {
+        return componentGen(VALID_SERVICE_START_CHARS, VALID_SERVICE_CHARS);
+    }
+
+    private static Gen<String> instanceGen() {
+        return componentGen(VALID_INSTANCE_START_CHARS, VALID_INSTANCE_CHARS);
+    }
+
+    private static Gen<String> typeGen() {
+        return componentGen(VALID_TYPE_START_CHARS, VALID_TYPE_CHARS);
+    }
+
+    private static Gen<String> locatorGen() {
+        return componentGen(VALID_LOCATOR_START_CHARS, VALID_LOCATOR_CHARS);
+    }
+
+    private static Gen<String> componentGen(String startChars, String chars) {
+        return charGen(startChars).zip(stringGen(chars), (s, c) -> s + c);
+    }
+
+    private static Gen<String> stringGen(String chars) {
+        return lists().of(charGen(chars)).ofSizeBetween(0, 20).map(c -> {
+            StringBuilder builder = new StringBuilder(c.size());
+            c.forEach(builder::append);
+            return builder.toString();
+        });
+    }
+
+    private static Gen<Character> charGen(String chars) {
+        return Generate.pick(chars.chars().mapToObj(c -> (char) c).toList());
     }
 }
